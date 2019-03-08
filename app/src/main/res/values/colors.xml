@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2979ff</color>
+    <color name="colorPrimaryDark">#004ecb</color>
+    <color name="colorAccent">#2979ff</color>
+    <color name="white">@android:color/white</color>
+    <color name="light_pink">#f06292</color>
+    <color name="light_yellow">#fdd835</color>
+
+    <!--for random generation-->
+    <color name="dark_gray">#616161</color>
+    <color name="dark_red">#c41c00</color>
+    <color name="light_red">#b61827</color>
+    <color name="dark_green">#2e7d32</color>
+    <color name="dark_orange">#ff6f00</color>
+    <color name="chocolate">#5d4037</color>
+    <color name="dark_pink">#ad1457</color>
+    <color name="violet">#4a148c</color>
+    <color name="dark_kaki">#524c00</color>
+    <color name="light_kaki">#827717</color>
+    <color name="black">@android:color/black</color>
+
+
+
+
+</resources>
