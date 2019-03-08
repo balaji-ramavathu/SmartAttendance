@@ -5,13 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
+import com.example.smartattendance.model.DaoMaster;
+import com.example.smartattendance.model.DaoSession;
+import com.example.smartattendance.model.DataBaseHelper;
 import com.google.android.material.button.MaterialButton;
+
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.util.HashMap;
+
+import static com.example.smartattendance.BuildConfig.DEBUG;
 
 public class MainActivity extends AppCompatActivity {
     MaterialButton btnTeacher;
     MaterialButton btnStudent;
+    public static DaoSession daoSession;
 
     AlertDialogManager alert = new AlertDialogManager();
 
@@ -56,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        String nameDB = "smart_attendance";
+        DataBaseHelper helper = new DataBaseHelper(this, nameDB);
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
     }
 
     public void onClickBtnStudent(View view) {
@@ -68,4 +84,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public DaoSession getDaoSession() {
+        return daoSession;
+    }
 }
