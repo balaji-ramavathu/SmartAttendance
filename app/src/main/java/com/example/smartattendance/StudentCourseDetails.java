@@ -58,7 +58,7 @@ public class StudentCourseDetails extends AppCompatActivity {
         if (verify()) {
             row = Integer.parseInt(trow.getText().toString());
             column = Integer.parseInt(tcolumn.getText().toString());
-            String name = courseCode.toUpperCase() + "_" + sessionManager.getKeyName() + "_" + row + "_" + column + "_abc";
+            String name = courseCode.toUpperCase() + "_" + sessionManager.getKeyName().toUpperCase() + "_" + row + "_" + column + "_abc";
             if (radioGroup.getCheckedRadioButtonId() == rbBluetooth.getId()) {
                 network = "bluetooth";
                 mBluetoothAdapter.enable();

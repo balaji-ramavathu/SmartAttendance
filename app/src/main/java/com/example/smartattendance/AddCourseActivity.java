@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -59,7 +60,9 @@ public class AddCourseActivity extends AppCompatActivity {
     ListView lvRolls;
     ArrayList<RollNumber> rolls;
     ArrayList<dbCourse> _dbCourse;
+    ArrayList<dbCourseStudent> _SdbCourse;
     dbCourse _dbCourseSingle;
+    dbCourseStudent _SdbCourseSingle;
     AddRollsArrayAdapter arrayAdapter;
     int OPENED_COUNT;
     /* For google sheets */
@@ -73,6 +76,8 @@ public class AddCourseActivity extends AppCompatActivity {
     ArrayList <String> _rollnumbers;
     ProgressDialog mProgress;
     String CourseCode;
+    SessionManager sessionManager;
+    MaterialCardView cardView;
     /* For Google Sheets */
 
 
@@ -85,34 +90,43 @@ public class AddCourseActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
-
-
-
+        cardView=findViewById(R.id.cvStudentDetails);
         etCourseCode = findViewById(R.id.etCourseCode);
         etCourseName = findViewById(R.id.etCourseName);
-        addRoll = findViewById(R.id.btnAddRoll);
-        lvRolls = findViewById(R.id.lvRolls);
-        rolls = new ArrayList<>();
-        //first empty item
-        RollNumber rollNumber = new RollNumber();
-        rolls.add(rollNumber);
+        sessionManager =new SessionManager(getApplicationContext());
+        if(sessionManager.getProfession().equals("student")) {
+            cardView.setVisibility(View.GONE);
+            this.OPENED_COUNT=0;
+            _SdbCourse = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
+        } else {
+            addRoll = findViewById(R.id.btnAddRoll);
+            lvRolls = findViewById(R.id.lvRolls);
+            rolls = new ArrayList<>();
+            //first empty item
+            RollNumber rollNumber = new RollNumber();
+            rolls.add(rollNumber);
 
 //        thisRolls = new ArrayList<RollNumber>();
 //        thisCourse = new Course();
 
 //        Log.d("entered", rolls.size() + "");
-        arrayAdapter = new AddRollsArrayAdapter(this, R.layout.add_rolls_item, rolls);
-        lvRolls.setAdapter(arrayAdapter);
-        _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
-        Log.d("newDB", _dbCourse.size()+"");
-        /* For Google Sheets */
-        mCredential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
-        _rollnumbers = new ArrayList<String>();
-        this.OPENED_COUNT = 0;
-        mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Creating Google Sheet");
+            arrayAdapter = new AddRollsArrayAdapter(this, R.layout.add_rolls_item, rolls);
+            lvRolls.setAdapter(arrayAdapter);
+            _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
+            Log.d("newDB", _dbCourse.size()+"");
+            /* For Google Sheets */
+            mCredential = GoogleAccountCredential.usingOAuth2(
+                    getApplicationContext(), Arrays.asList(SCOPES))
+                    .setBackOff(new ExponentialBackOff());
+            _rollnumbers = new ArrayList<String>();
+            this.OPENED_COUNT = 0;
+            mProgress = new ProgressDialog(this);
+            mProgress.setMessage("Creating Google Sheet");
+
+        }
+
+
+
 
         /* For Google Sheets */
     }
@@ -148,61 +162,90 @@ public class AddCourseActivity extends AppCompatActivity {
         return _num;
     }
     public void onClickFabAddCourseOk(View view) {
-        if(OPENED_COUNT == 0) {
-            View v;
-            EditText etSuffix, etFrom, etTo;
-            if (Utils.isBlank(etCourseCode.getText().toString())) {
-                Toast.makeText(this, "Course Code should not be empty!", Toast.LENGTH_LONG).show();
-                return;
-            }
-            this.CourseCode = etCourseCode.getText().toString().toUpperCase();
-            //thisCourse.setCourseCode(etCourseCode.getText().toString().toUpperCase());
-            if (Utils.isBlank(etCourseName.getText().toString())) {
-                Toast.makeText(this, "Course Name should not be empty!", Toast.LENGTH_LONG).show();
-                return;
-            }
-            String _courseName = etCourseName.getText().toString().toUpperCase();
-            //thisCourse.setCourseName(etCourseName.getText().toString().toUpperCase());
-            int count = lvRolls.getChildCount();
-            int notNullChildrenCount = count;
-            Log.d("Roll", Integer.toString(count));
-            ArrayList<String> Suffix = new ArrayList<String>();
-            ArrayList<Integer> From = new ArrayList<Integer>();
-            ArrayList<Integer> To = new ArrayList<Integer>();
-            for (int i = 0; i < count; i++) {
-                v = lvRolls.getChildAt(i);
-                etSuffix = v.findViewById(R.id.etSuffix);
-                etFrom = v.findViewById(R.id.etRollFrom);
-                etTo = v.findViewById(R.id.etRollTo);
-                String suffix = etSuffix.getText().toString().toUpperCase();
-                String from = etFrom.getText().toString();
-                String to = etTo.getText().toString();
-                if (!(Utils.isBlank(suffix)||Utils.isBlank(from) || Utils.isBlank(to))) {
-                    Suffix.add(suffix);
-                    From.add(Integer.parseInt(from));
-                    To.add(Integer.parseInt(to));
-                    RollNumber rollNumber = new RollNumber(suffix,Integer.parseInt(from),Integer.parseInt(to));
-                    Log.d("roll",suffix+from+to);
-                    // rolls.add(rollNumber);
-                } else {
-                    notNullChildrenCount--;
+        if(sessionManager.getProfession().equals("teacher")) {
+            if(OPENED_COUNT == 0) {
+                View v;
+                EditText etSuffix, etFrom, etTo;
+                if (Utils.isBlank(etCourseCode.getText().toString())) {
+                    Toast.makeText(this, "Course Code should not be empty!", Toast.LENGTH_LONG).show();
+                    return;
                 }
-            }
-            ArrayList<dbRollnumber> _dbRollnumber= new ArrayList<dbRollnumber>();
-            for (int i = 0; i < Suffix.size(); i++) {
-                for (int j = From.get(i); j <= To.get(i); j++) {
-                    _dbRollnumber.add(new dbRollnumber(Suffix.get(i).toUpperCase() + makeValidroll(j), 0));
-                    _rollnumbers.add(Suffix.get(i).toUpperCase() + makeValidroll(j));
+                this.CourseCode = etCourseCode.getText().toString().toUpperCase();
+                //thisCourse.setCourseCode(etCourseCode.getText().toString().toUpperCase());
+                if (Utils.isBlank(etCourseName.getText().toString())) {
+                    Toast.makeText(this, "Course Name should not be empty!", Toast.LENGTH_LONG).show();
+                    return;
                 }
-            }
-            Collections.sort(_rollnumbers);
-            //Log.d("entered", "Roll_size" + Integer.toString(thisRolls.size()));
+                String _courseName = etCourseName.getText().toString().toUpperCase();
+                //thisCourse.setCourseName(etCourseName.getText().toString().toUpperCase());
+                int count = lvRolls.getChildCount();
+                int notNullChildrenCount = count;
+                Log.d("Roll", Integer.toString(count));
+                ArrayList<String> Suffix = new ArrayList<String>();
+                ArrayList<Integer> From = new ArrayList<Integer>();
+                ArrayList<Integer> To = new ArrayList<Integer>();
+                for (int i = 0; i < count; i++) {
+                    v = lvRolls.getChildAt(i);
+                    etSuffix = v.findViewById(R.id.etSuffix);
+                    etFrom = v.findViewById(R.id.etRollFrom);
+                    etTo = v.findViewById(R.id.etRollTo);
+                    String suffix = etSuffix.getText().toString().toUpperCase();
+                    String from = etFrom.getText().toString();
+                    String to = etTo.getText().toString();
+                    if (!(Utils.isBlank(suffix)||Utils.isBlank(from) || Utils.isBlank(to))) {
+                        Suffix.add(suffix);
+                        From.add(Integer.parseInt(from));
+                        To.add(Integer.parseInt(to));
+                        RollNumber rollNumber = new RollNumber(suffix,Integer.parseInt(from),Integer.parseInt(to));
+                        Log.d("roll",suffix+from+to);
+                        // rolls.add(rollNumber);
+                    } else {
+                        notNullChildrenCount--;
+                    }
+                }
+                ArrayList<dbRollnumber> _dbRollnumber= new ArrayList<dbRollnumber>();
+                for (int i = 0; i < Suffix.size(); i++) {
+                    for (int j = From.get(i); j <= To.get(i); j++) {
+                        _dbRollnumber.add(new dbRollnumber(Suffix.get(i).toUpperCase() + makeValidroll(j), 0));
+                        _rollnumbers.add(Suffix.get(i).toUpperCase() + makeValidroll(j));
+                    }
+                }
+                Collections.sort(_rollnumbers);
+                //Log.d("entered", "Roll_size" + Integer.toString(thisRolls.size()));
 
-            Log.d("Rol", Integer.toString(_rollnumbers.size()));
-            _dbCourseSingle = new dbCourse(this.CourseCode,_courseName, _dbRollnumber);
-            OPENED_COUNT++;
+                Log.d("Rol", Integer.toString(_rollnumbers.size()));
+                _dbCourseSingle = new dbCourse(this.CourseCode,_courseName, _dbRollnumber);
+                OPENED_COUNT++;
+            }
+            getResultsFromApi(_rollnumbers);
+        } else {
+            if (OPENED_COUNT == 0) {
+                View v;
+                EditText etSuffix, etFrom, etTo;
+                if (Utils.isBlank(etCourseCode.getText().toString())) {
+                    Toast.makeText(this, "Course Code should not be empty!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Log.d("text", " " + etCourseCode.getText());
+                this.CourseCode = etCourseCode.getText().toString().toUpperCase();
+                if (Utils.isBlank(etCourseName.getText().toString())) {
+                    Toast.makeText(this, "Course Name should not be empty!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                String _courseName = etCourseName.getText().toString().toUpperCase();
+                _SdbCourseSingle = new dbCourseStudent();
+                _SdbCourseSingle.Course = CourseCode;
+                _SdbCourseSingle.name = _courseName;
+                _SdbCourse.add(_SdbCourseSingle);
+                Paper.book().write("SCourses", _SdbCourse);
+                OPENED_COUNT++;
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("refresh", true);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+
+            }
         }
-        getResultsFromApi(_rollnumbers);
 
 
     }

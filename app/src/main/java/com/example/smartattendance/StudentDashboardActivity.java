@@ -18,19 +18,17 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class StudentDashboardActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     FloatingActionButton fab;
-    ArrayList<dbCourseStudent> courseList;
+    ArrayList<dbCourseStudent> _dbCourse;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,21 +55,15 @@ public class StudentDashboardActivity extends AppCompatActivity {
             }
 
         });
-        dbCourseStudent[] st1 = new dbCourseStudent[4];
-        st1[0].Course = "SMAT330C";
-        st1[1].Course = "DMW630C";
-        st1[0].Course = "SMAT330C";
-        st1[1].Course = "DMW630C";
-        st1[0].name = "Maths";
-        st1[1].name = "Maths";
-        st1[0].name = "Maths";
-        st1[1].name = "Maths";
-        courseList.add(st1[0]);
-        courseList.add(st1[1]);
-        courseList.add(st1[2]);
-        courseList.add(st1[3]);
-        courseList = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
-        adapter = new StudentDashboardAdapter(getApplicationContext(), courseList);
+//        courseDao = Utils.getDaoSession(this).getCourseDao();
+//        courseList = courseDao.loadAll();
+        _dbCourse = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
+        //Log.d("enteredDb", courseList.size() + "");
+        /*courseList.add("SMAT330C");
+        courseList.add("DMW630C");
+        courseList.add("OPT630C");
+        courseList.add("DMW630C");*/
+        adapter = new StudentDashboardAdapter(this, _dbCourse);
         recyclerView = findViewById(R.id.rvCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -86,10 +78,11 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 Boolean refresh = data.getExtras().getBoolean("refresh");
                 Log.d("enteredResult", refresh + "");
                 if (refresh) {
-                    courseList.clear();
+                    /*courseList.clear();
+                    courseList.addAll(courseDao.loadAll());*/
+                    _dbCourse.clear();
                     ArrayList<dbCourseStudent> tmp = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
-                    courseList.addAll(tmp);
-                    adapter.notifyDataSetChanged();
+                    _dbCourse.addAll(tmp);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -110,7 +103,9 @@ public class StudentDashboardActivity extends AppCompatActivity {
     }
 
     public void onClickFabAddCourse(View view) {
+
         Intent intent = new Intent(StudentDashboardActivity.this, AddCourseActivity.class);
         startActivityForResult(intent, 2);
+
     }
 }

@@ -72,18 +72,11 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SessionManager sessionManager = new SessionManager(context);
-                String profession = sessionManager.getProfession();
-                if(profession.equals("teacher")) {
+
                     Intent intent = new Intent(context, CourseDetails.class);
                     intent.putExtra("courseCode", courseCode);
                     context.startActivity(intent);
-                }
-                else {
-                    Intent intent = new Intent(context, StudentCourseDetails.class);
-                    intent.putExtra("courseCode", courseCode);
-                    context.startActivity(intent);
-                }
+
             }
         });
 

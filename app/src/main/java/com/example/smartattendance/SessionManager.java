@@ -119,6 +119,6 @@ public class SessionManager {
     }
 
     public String getKeyName() {
-        return pref.getString(KEY_PROFESSION, "student");
+        return pref.getString(KEY_NAME, "student");
     }
 }

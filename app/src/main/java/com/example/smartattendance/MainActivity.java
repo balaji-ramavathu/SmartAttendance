@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 
@@ -57,9 +56,6 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
-
-
-
     }
 
     public void onClickBtnStudent(View view) {
@@ -68,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBtnTeacher(View view) {
+//        Intent intent = new Intent(MainActivity.this, TeacherLoginActivity.class);
         Intent intent = new Intent(MainActivity.this, TeacherLoginActivity.class);
         startActivity(intent);
     }
+
 
 }
