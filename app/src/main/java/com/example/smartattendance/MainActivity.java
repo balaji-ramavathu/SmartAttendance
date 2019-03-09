@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.smartattendance.model.DaoMaster;
@@ -14,11 +13,6 @@ import com.example.smartattendance.model.DataBaseHelper;
 import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.query.QueryBuilder;
-
-import java.util.HashMap;
-
-import static com.example.smartattendance.BuildConfig.DEBUG;
 
 public class MainActivity extends AppCompatActivity {
     MaterialButton btnTeacher;
@@ -80,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBtnTeacher(View view) {
+//        Intent intent = new Intent(MainActivity.this, TeacherLoginActivity.class);
         Intent intent = new Intent(MainActivity.this, TeacherLoginActivity.class);
         startActivity(intent);
     }
