@@ -1,13 +1,116 @@
 package com.example.smartattendance;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import io.paperdb.Paper;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentDashboardActivity extends AppCompatActivity {
-
+    private DrawerLayout drawerLayout;
+    RecyclerView recyclerView;
+    RecyclerView.Adapter adapter;
+    FloatingActionButton fab;
+    ArrayList<dbCourseStudent> courseList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_dashboard);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        toolbar.setTitle("Courses");
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.navigation);
+        fab = findViewById(R.id.fabAddCourse);
+        LayoutInflater.from(this).inflate(R.layout.td_navigation_header, navigationView);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                menuItem.setChecked(true);
+                // close drawer when item is tapped
+                drawerLayout.closeDrawers();
+                return true;
+            }
+
+        });
+        dbCourseStudent[] st1 = new dbCourseStudent[4];
+        st1[0].Course = "SMAT330C";
+        st1[1].Course = "DMW630C";
+        st1[0].Course = "SMAT330C";
+        st1[1].Course = "DMW630C";
+        st1[0].name = "Maths";
+        st1[1].name = "Maths";
+        st1[0].name = "Maths";
+        st1[1].name = "Maths";
+        courseList.add(st1[0]);
+        courseList.add(st1[1]);
+        courseList.add(st1[2]);
+        courseList.add(st1[3]);
+        courseList = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
+        adapter = new StudentDashboardAdapter(getApplicationContext(), courseList);
+        recyclerView = findViewById(R.id.rvCourses);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                Boolean refresh = data.getExtras().getBoolean("refresh");
+                Log.d("enteredResult", refresh + "");
+                if (refresh) {
+                    courseList.clear();
+                    ArrayList<dbCourseStudent> tmp = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
+                    courseList.addAll(tmp);
+                    adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickFabAddCourse(View view) {
+        Intent intent = new Intent(StudentDashboardActivity.this, AddCourseActivity.class);
+        startActivityForResult(intent, 2);
     }
 }

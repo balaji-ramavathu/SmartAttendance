@@ -28,22 +28,12 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/password_layout"
-                android:hint="enter password">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"/>
+                    android:id="@+id/etTeacherUsername"/>
 
             </com.google.android.material.textfield.TextInputLayout>
+
+
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
@@ -51,24 +41,6 @@
                 android:id="@+id/btnTeacherLogin"
                 android:text="Login"
                 android:onClick="onClickBtnTeacherLogin"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="Don't have an account ?"/>
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/btnTeacherSignup"
-                    android:text="SignUp"/>
-
-            </LinearLayout>
-
 
         </LinearLayout>
 
