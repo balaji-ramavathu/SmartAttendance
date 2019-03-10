@@ -458,13 +458,13 @@ public class AddCourseActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-//            mProgress.show();
+            mProgress.show();
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-//            mProgress.hide();
+            mProgress.hide();
             Intent returnIntent = new Intent();
             returnIntent.putExtra("refresh", true);
             setResult(Activity.RESULT_OK, returnIntent);
@@ -474,7 +474,7 @@ public class AddCourseActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
-//            mProgress.hide();
+            mProgress.hide();
             Log.d("Spread", "onCancelled: ");
             if (mLastError != null) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {

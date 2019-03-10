@@ -50,8 +50,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/etWeight"
-                style="@style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox"/>
+                android:id="@+id/etWeight" />
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.button.MaterialButton

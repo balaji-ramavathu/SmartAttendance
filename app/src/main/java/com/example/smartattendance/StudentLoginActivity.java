@@ -51,7 +51,7 @@ public class StudentLoginActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(txtUsername.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "Enter valid rollNumber ", Toast.LENGTH_SHORT).show();
                 } else {
-                    String rollnumber = txtUsername.getText().toString();
+                    String rollnumber = txtUsername.getText().toString().toUpperCase();
                     // Check if username, password is filled
                     session.createLoginSession(rollnumber, "student");
 

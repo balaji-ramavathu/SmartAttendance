@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text="Roll Number"
         android:singleLine="true"
         android:layout_marginBottom="5dip"/>
 
