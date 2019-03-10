@@ -106,10 +106,7 @@ public class AddCourseActivity extends AppCompatActivity {
             RollNumber rollNumber = new RollNumber();
             rolls.add(rollNumber);
 
-//        thisRolls = new ArrayList<RollNumber>();
-//        thisCourse = new Course();
 
-//        Log.d("entered", rolls.size() + "");
             arrayAdapter = new AddRollsArrayAdapter(this, R.layout.add_rolls_item, rolls);
             lvRolls.setAdapter(arrayAdapter);
             _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
@@ -427,10 +424,7 @@ public class AddCourseActivity extends AppCompatActivity {
 //            thisCourse.setSpreadSheetId(spreadsheetId);
             _dbCourseSingle.spreadsheetID = spreadsheetId;
             _dbCourse.add(_dbCourseSingle);
-            Log.d("newDB", "after creation"+_dbCourse.size());
-            Paper.book().write("Courses", _dbCourse);
-            //Log.d("newDB", "after creation2"+_Paper.bo);
-            Log.d("Spread", "SpreadSheetID later: "+ spreadsheetId);
+
             String range = "Sheet1!A1:A"+Integer.toString(rollno.size()+1);
 
             List<List<Object>> data;
@@ -465,6 +459,7 @@ public class AddCourseActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mProgress.hide();
+            Paper.book().write("Courses", _dbCourse);
             Intent returnIntent = new Intent();
             returnIntent.putExtra("refresh", true);
             setResult(Activity.RESULT_OK, returnIntent);

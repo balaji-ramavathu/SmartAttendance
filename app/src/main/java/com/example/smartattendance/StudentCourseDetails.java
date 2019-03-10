@@ -69,7 +69,7 @@ public class StudentCourseDetails extends AppCompatActivity {
                 network = "wifi";
                 ClipData clip = ClipData.newPlainText("name", name);
                 clipboard.setPrimaryClip(clip);
-                startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);
+                startActivityForResult(new Intent(Settings.ACTION_WIRELESS_SETTINGS), 0);
             }
         }
     }

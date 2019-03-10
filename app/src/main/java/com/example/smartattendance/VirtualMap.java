@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import io.paperdb.Paper;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -118,6 +119,7 @@ public class VirtualMap extends AppCompatActivity {
 
         recyclerView=findViewById(R.id.rvVirtualMap);
         tvProgress=findViewById(R.id.tvProgress);
+        etWeight=findViewById(R.id.etWeight);
         virtualMapHelper = new VirtualMapHelper();
 
     }
@@ -224,7 +226,7 @@ public class VirtualMap extends AppCompatActivity {
             if(fields.length != 5)
                 continue;
             Log.d("come_on_boy" + result, "valid");
-            if(checkRollno(fields[1]) && check_row_col(fields[2], fields[3]))
+            if(check_row_col(fields[2], fields[3]) && fields[0].equals(courseCode))
             {
                 newWifiList.add(result);
             }
@@ -260,27 +262,20 @@ public class VirtualMap extends AppCompatActivity {
         {
             Log.d("newboom", "name" + s);
         }
-        newWifiList.add("SMAT330C_IIT2016001_1_1_abc");
-        newWifiList.add("SMAT330C_IIT2016001_1_4_abc");
+//        newWifiList.add("SMAT330C_IIT2016001_1_1_abc");
+//        newWifiList.add("SMAT330C_IIT2016001_1_4_abc");
 //        newWifiList.add("SMAT330C_IIT2016001_4_1_abc");
-        newWifiList.add("SMAT330C_IIT2016001_4_4_abc");
-        newWifiList.add("SMAT330C_IIT2016001_1_3_abc");
-        newWifiList.add("SMAT330C_IIT2016001_2_3_abc");
-        newWifiList.add("SMAT330C_IIT2016002_1_3_abc");
-        newWifiList.add("SMAT330C_IIT2016002_2_3_abc");
+//        newWifiList.add("SMAT330C_IIT2016001_4_4_abc");
+//        newWifiList.add("SMAT330C_IIT2016001_1_3_abc");
+//        newWifiList.add("SMAT330C_IIT2016001_2_3_abc");
+//        newWifiList.add("SMAT330C_IIT2016002_1_3_abc");
+//        newWifiList.add("SMAT330C_IIT2016002_2_3_abc");
 
         virtualMapHelper.Update(newWifiList);
         VMap = virtualMapHelper.getVMap();
         Log.d("rows", " " + virtualMapHelper.getMaxRow());
         Log.d("rows", " " + virtualMapHelper.getMaxColumn());
 
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                Log.d("students", " " + VMap.get(j).get(i).size());
-            }
-        }
     }
     @Override
     protected void onDestroy() {
@@ -349,64 +344,51 @@ public class VirtualMap extends AppCompatActivity {
     public void onClickSaveAttendance(View view) {
         ArrayList<String> presentRolls=virtualMapHelper.getPresentStudents();
 
-            //CourseDao courseDao=Utils.getDaoSession(this).getCourseDao();
-            //Course thisCourse=courseDao.load(courseCode);
-            //Log.d("enteredcourse",courseCode+" "+thisCourse.getCourseCode());
-            //Log.d("enteredcourse",thisCourse.getCourseName() + " " + thisCourse.getSpreadSheetId());
-            ArrayList<dbCourse> _dbCourse = Paper.book().read("Courses",new ArrayList<dbCourse>());
-            ArrayList<dbRollnumber> enrolledRollNumbers = new ArrayList<dbRollnumber>();
-            for(dbCourse ele : _dbCourse){
-                if(ele.courseid.equals(courseCode)){
-                    enrolledRollNumbers = ele.rollnumbers;
-                }
+        ArrayList<dbCourse> _dbCourse = Paper.book().read("Courses",new ArrayList<dbCourse>());
+        ArrayList<dbRollnumber> enrolledRollNumbers = new ArrayList<dbRollnumber>();
+        for(dbCourse ele : _dbCourse){
+            if(ele.courseid.equals(courseCode)){
+                enrolledRollNumbers = ele.rollnumbers;
             }
-            String date=Utils.getDate();
-            int weight=getWeight();
-            dbAttendance attendance=new dbAttendance();
-            attendance.courseId=courseCode;
-            attendance.date=date;
-            attendance.weight=weight;
-            attendance.isSynced=0;
-            /*Attendance thisAttendance=new Attendance();
-
-            thisAttendance.setCourseIdWithDate(courseCode+"_"+date);
-            thisAttendance.setCourseId(courseCode);
-            thisAttendance.setDate(date);
-            thisAttendance.setWeight(weight);*/
-
-        Log.d("entered","enrolled size" + Integer.toString(enrolledRollNumbers.size()));
-            for(int i = 0; i < enrolledRollNumbers.size(); ++i){
-                for(int j = i; j < enrolledRollNumbers.size(); ++j){
-                    if(enrolledRollNumbers.get(i).rollnumber.compareTo(enrolledRollNumbers.get(j).rollnumber) > 0){
-                        dbRollnumber _tmp = enrolledRollNumbers.get(i);
-                        enrolledRollNumbers.set(i, enrolledRollNumbers.get(j));
-                        enrolledRollNumbers.set(j, _tmp);
-                    }
-                }
-            }
-
-
-            for(int i=0;i<enrolledRollNumbers.size();i++) {
-                for(int j=0;j<presentRolls.size();j++) {
-                    if(enrolledRollNumbers.get(i).rollnumber.equals(presentRolls.get(j))) {
-                        enrolledRollNumbers.get(i).isPresent = 1;
-
-                    }
-
-                }
-            }
-        Log.d("entered","Presnet size" + Integer.toString(presentRolls.size())+" "
-                +"enrolled size" + Integer.toString(enrolledRollNumbers.size()));
-            attendance.rollnumbers = enrolledRollNumbers;
-            ArrayList<dbAttendance> _at = Paper.book().read("Attendance", new ArrayList<dbAttendance>());
-            _at.add(attendance);
-            Paper.book().write("Attendance", _at);
-//            thisAttendance.setRollNumbers(enrolledRollNumbers);
-//            Log.d("enteredDatabaseLast",thisAttendance.getCourseIdWithDate()
-//            +" "+thisAttendance.getDate()+" "+thisAttendance.getWeight()+" "+thisAttendance.getIsSynced());
-            //AttendanceDao attendanceDao=Utils.getDaoSession(this).getAttendanceDao();
-
         }
+        String date=Utils.getDate();
+        int weight=getWeight();
+        dbAttendance attendance=new dbAttendance();
+        attendance.courseId=courseCode;
+        attendance.date=date;
+        attendance.weight=weight;
+        attendance.isSynced=0;
+
+        Log.d("sheetUpdateVM","from courses" + Integer.toString(enrolledRollNumbers.size()));
+        for(int i = 0; i < enrolledRollNumbers.size(); ++i){
+            for(int j = i; j < enrolledRollNumbers.size(); ++j){
+                if(enrolledRollNumbers.get(i).rollnumber.compareTo(enrolledRollNumbers.get(j).rollnumber) > 0){
+                    dbRollnumber _tmp = enrolledRollNumbers.get(i);
+                    enrolledRollNumbers.set(i, enrolledRollNumbers.get(j));
+                    enrolledRollNumbers.set(j, _tmp);
+                }
+            }
+        }
+
+
+        for(int i=0;i<enrolledRollNumbers.size();i++) {
+            for(int j=0;j<presentRolls.size();j++) {
+                if(enrolledRollNumbers.get(i).rollnumber.equals(presentRolls.get(j))) {
+                    enrolledRollNumbers.get(i).isPresent = 1;
+                }
+            }
+        }
+
+        attendance.rollnumbers = enrolledRollNumbers;
+        Log.d("sheetUpdateVMAP",Integer.toString(enrolledRollNumbers.size()));
+        ArrayList<dbAttendance> _at = Paper.book().read("Attendance", new ArrayList<dbAttendance>());
+        _at.add(attendance);
+        Paper.book().write("Attendance", _at);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("refresh", true);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
+}
 
 

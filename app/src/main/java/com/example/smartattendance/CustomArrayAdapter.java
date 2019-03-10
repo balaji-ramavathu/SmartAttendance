@@ -56,16 +56,6 @@ public class CustomArrayAdapter extends ArrayAdapter {
 
         return v;
     }
-    public void UpdateSheets(String date){
-        ArrayList<dbAttendance> _dbAttendance = Paper.book().read("Attendance", new ArrayList<dbAttendance>());
-        ArrayList<dbRollnumber> _rollnumbers = new ArrayList<>();
-        for(dbAttendance element : _dbAttendance){
-            if(element.courseId.equals(CourseCode) && element.date.equals(date)){
-                _rollnumbers = element.rollnumbers;
-            }
-        }
-
-    }
 
 
 

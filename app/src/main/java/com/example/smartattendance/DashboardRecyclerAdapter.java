@@ -73,9 +73,9 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
             @Override
             public void onClick(View v) {
 
-                    Intent intent = new Intent(context, CourseDetails.class);
-                    intent.putExtra("courseCode", courseCode);
-                    context.startActivity(intent);
+            Intent intent = new Intent(context, CourseDetails.class);
+            intent.putExtra("courseCode", courseCode);
+            context.startActivity(intent);
 
             }
         });

@@ -5,13 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -27,6 +31,7 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
+import io.paperdb.Paper;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -52,14 +57,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.Math.*;
+
+
 public class CourseDetails extends AppCompatActivity {
     Button btngooglesheets;
 
     MaterialButton btnTakeAttendance;
     RadioGroup radioGroup;
     RadioButton rbWifi,rbBluetooth;
-    String network,courseCode;
-
+    String network;
+    String courseCode;
+    ArrayList<dbCourse> _dbCourse;
+    ArrayList<dbAttendance> _dbAttendance;
     /* For Google Sheets */
     GoogleAccountCredential mCredential;
     static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -68,32 +78,52 @@ public class CourseDetails extends AppCompatActivity {
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {SheetsScopes.SPREADSHEETS};
+    CustomArrayAdapter arrayAdapter;
+    ArrayList<String> al;
+    ProgressDialog mProgress;
+    String updateDate;
+    String updateSpreadsheetID;
+    ArrayList<String> updateAttendance;
+    int updateSyncedct;
+    int updateIndex;
+    int updateWeight;
+//    int updateStudentct;
     /* For Google Sheets */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_details);
-        ArrayList<String> al = new ArrayList<String>();
+        al = new ArrayList<String>();
         radioGroup=findViewById(R.id.rgNetwork);
         rbWifi=findViewById(R.id.rbWifi);
         rbBluetooth=findViewById(R.id.rbBluetooth);
         btnTakeAttendance=findViewById(R.id.btnTakeAttendence);
         if(!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
-            courseCode=getIntent().getStringExtra("courseCode");
+            this.courseCode=getIntent().getStringExtra("courseCode");
         }
-
-
-
-
-        for(int i = 0; i < 20; i++)
-        {
-            al.add(i+"-12-19");
+        _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
+        _dbAttendance = Paper.book().read("Attendance", new ArrayList<dbAttendance>());
+        this.updateSyncedct = 0;
+        for(dbAttendance element : _dbAttendance){
+            if(element.isSynced == 0){
+                al.add(element.date);
+            }
+            else{
+                this.updateSyncedct++;
+            }
         }
-
-        CustomArrayAdapter arrayAdapter = new CustomArrayAdapter(this, R.layout.list_item_buttons, al,courseCode);
+        for(dbCourse element : _dbCourse){
+            if(element.courseid.equals(courseCode)){
+                this.updateSpreadsheetID = element.spreadsheetID;
+            }
+        }
+        arrayAdapter = new CustomArrayAdapter(this, R.layout.list_item_buttons, al,courseCode);
         ListView listView = (ListView) findViewById(R.id.datelist);
         listView.setAdapter(arrayAdapter);
         /* Google Sheets */
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Updating Attendance");
+        updateAttendance = new ArrayList<String>();
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
@@ -101,23 +131,21 @@ public class CourseDetails extends AppCompatActivity {
         btngooglesheets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Spread", "Button clicked");
-                getResultsFromApi();
+                ArrayList<dbCourse> _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
+                String spreadsheeturl = "https://docs.google.com/spreadsheet/";
+                for(dbCourse ele: _dbCourse){
+                    if(ele.courseid.equals(courseCode)){
+                        spreadsheeturl ="https://docs.google.com/spreadsheets/d/"+ele.spreadsheetID+"/edit#gid=0";
+                    }
+                }
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(spreadsheeturl));
+                startActivity(browserIntent);
                 Log.d("Spread", "Account" + mCredential.getSelectedAccountName());
 
             }
         });
         /* Google Sheets */
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*View parentView=(View) parent.getParent();*/
-                Log.d("entered","sj");
-                TextView dateView=(TextView) view.findViewById(R.id.date);
-                String date=dateView.getText().toString();
-                Log.d("date",date);
-            }
-        });
+
     }
 
     public void UpdateSheets(View v){
@@ -126,13 +154,25 @@ public class CourseDetails extends AppCompatActivity {
         //reset all the listView items background colours
         //before we set the clicked one..
 
-        //get the row the clicked button is in
-        LinearLayout vwParentRow = (LinearLayout)v.getParent();
+        LinearLayout parent = (LinearLayout)v.getParent();
+        LinearLayout pparent = (LinearLayout)parent.getParent();
+        TextView c = (TextView)pparent.getChildAt(0);
+        updateDate = c.getText().toString();
+        int _id = 0;
+        updateAttendance.clear();
+        for(dbAttendance element: _dbAttendance){
+            if(element.date.equals(updateDate) && element.isSynced == 0){
+                updateIndex = _id;
+                updateWeight = element.weight;
+                for(dbRollnumber element2 : element.rollnumbers){
+                    updateAttendance.add(Integer.toString(element2.isPresent));
+                }
+                break;
+            }
+            _id++;
+        }
 
-        TextView child = (TextView)vwParentRow.getChildAt(0);
-        Button btnChild = (Button)vwParentRow.getChildAt(1);
-        Log.d("childbutton", child.getText().toString());
-        vwParentRow.refreshDrawableState();
+        getResultsFromApi();
     }
     public void onClickBtnTakeAttendance(View view) {
 
@@ -153,7 +193,8 @@ public class CourseDetails extends AppCompatActivity {
         if(courseCode!=null) {
             intent.putExtra("courseCode",courseCode);
         }
-        startActivity(intent);
+        startActivityForResult(intent, 2);
+
 
     }
 
@@ -265,9 +306,36 @@ public class CourseDetails extends AppCompatActivity {
                     getResultsFromApi();
                 }
                 break;
+            case 2:
+                if (resultCode == Activity.RESULT_OK) {
+                    Boolean refresh = data.getExtras().getBoolean("refresh");
+                    Log.d("VMAPreturn", refresh + "");
+                    if (refresh) {
+                        /*courseList.clear();
+                        courseList.addAll(courseDao.loadAll());*/
+                        ArrayList<dbAttendance> _tmpat = new ArrayList<dbAttendance>();
+                        ArrayList<String> _tmpdate = new ArrayList<String>();
+                        for(dbAttendance element : _dbAttendance){
+                            _tmpat.add(element);
+                            if(element.isSynced == 0){
+                                _tmpdate.add(element.date);
+                            }
+                            else{
+                                this.updateSyncedct++;
+                            }
+                        }
+
+                        Intent i = new Intent(CourseDetails.this,CourseDetails.class);
+                        i.putExtra("courseCode", courseCode);
+                        startActivity(i);
+                        finish();
+                    }
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
         }
     }
-
 
     private boolean isDeviceOnline() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -278,7 +346,6 @@ public class CourseDetails extends AppCompatActivity {
     private class MakeRequestTask extends AsyncTask<Void, Void, Void> {
         private com.google.api.services.sheets.v4.Sheets mService = null;
         private Exception mLastError = null;
-        String title;
         // The constructor
         MakeRequestTask(GoogleAccountCredential credential, String title) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -287,7 +354,6 @@ public class CourseDetails extends AppCompatActivity {
                     transport, jsonFactory, credential)
                     .setApplicationName("Android spreadsheet client")
                     .build();
-            this.title = title;
         }
 
         protected Void doInBackground(Void... params) {
@@ -305,34 +371,53 @@ public class CourseDetails extends AppCompatActivity {
             return null;
         }
 
-        // creates a new spreadsheet
-        private void createSpreadSheet(String title) throws IOException {
-            com.google.api.services.sheets.v4.model.Spreadsheet mSpreadsheet, newSpreadSheet;
-            mSpreadsheet = new Spreadsheet();
-            SpreadsheetProperties spreadsheetProperties = new SpreadsheetProperties();
-            spreadsheetProperties.setTitle(title);// name of your spreadsheet
-            mSpreadsheet = mSpreadsheet.setProperties(spreadsheetProperties);
-
-
-            newSpreadSheet = mService.spreadsheets()
-                    .create(mSpreadsheet)
-                    .execute();
-            Log.d("Spread", "SpreadSheetID: "+ newSpreadSheet.getSpreadsheetId());
-            // this 'newSpreadsheet' is ready to use for write/read operation.
+        private String getColumn(int num){
+            int mod = num % 26;
+            if(mod == 0){
+                mod = 27;
+            }
+            int start = (int) ceil(num / 27);
+            String ret = "";
+            while (num>0) {
+                // Find remainder
+                int rem = num%26;
+                // If remainder is 0, then a 'Z' must be there in output
+                if (rem==0){
+                    ret = ret+"Z";
+                    num = (num/26)-1;
+                }
+                else{
+                    char letter = (char)((rem-1) + 'A');
+                    ret = ret + Character.toString(letter);
+                    num = num/26;
+                }
+            }
+            return ret;
         }
 
         private void putDataFromApi() throws IOException {
-            //String spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
-            String spreadsheetId="14ERBKI3hb1MFwhCJCyv7t5p03hkCapA7zG06zjgooMY";
-            String range = "Sheet1!A1:E1";
+            String spreadsheetId=updateSpreadsheetID;
 
+            String range = "Sheet1!"+getColumn(updateSyncedct+2)+"1:"+getColumn(updateSyncedct+2+updateWeight-1)+Integer.toString(updateAttendance.size()+1);
+            Log.d("sheetsUpdate",range);
+            List<List<Object>> data;
+            ArrayList<List<Object>> _tmp = new ArrayList<List<Object>>();
+            List<Object> __tmp = new ArrayList<>();
+            for(int i = 0; i < updateWeight; ++i) {
+                __tmp.add(updateDate);
+            }
+            _tmp.add(__tmp);
+            for(Object roll : updateAttendance){
+                __tmp = new ArrayList<>();
+                for(int i = 0; i < updateWeight; ++i) {
+                    __tmp.add(roll);
+                }
+                Log.d("sheetsUpdate SZ",Integer.toString(__tmp.size()));
+                _tmp.add(__tmp);
+            }
 
-
-            List<List<Object>> data = Arrays.asList(
-                    Arrays.asList(
-                            (Object) "Roll Number","IIT2016085","IIT2016086","IIT2016087","IIT2016088"
-                    )
-            );
+            Log.d("sheetsUpdate",Integer.toString(_tmp.size()));
+            data = _tmp;
             ValueRange body = new ValueRange()
                     .setValues(data);
             List<String> results = new ArrayList<String>();
@@ -340,11 +425,30 @@ public class CourseDetails extends AppCompatActivity {
                     .update(spreadsheetId, range,body)
                     .setValueInputOption("RAW")
                     .execute();
-
+            Log.d("Spread", spreadsheetId+"for adding");
             results.add(response.getUpdatedCells().toString());
         }
         @Override
+        protected void onPreExecute() {
+            mProgress.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mProgress.hide();
+            _dbAttendance.get(updateIndex).isSynced = 1;
+            Paper.book().write("Attendance", _dbAttendance);
+            Intent returnIntent = new Intent(CourseDetails.this,CourseDetails.class);
+            returnIntent.putExtra("courseCode", courseCode);
+            startActivity(returnIntent);
+            finish();
+
+        }
+
+        @Override
         protected void onCancelled() {
+            mProgress.hide();
             Log.d("Spread", "onCancelled: ");
             if (mLastError != null) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
