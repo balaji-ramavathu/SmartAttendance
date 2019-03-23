@@ -58,7 +58,12 @@ public class StudentCourseDetails extends AppCompatActivity {
         if (verify()) {
             row = Integer.parseInt(trow.getText().toString());
             column = Integer.parseInt(tcolumn.getText().toString());
-            String name = courseCode.toUpperCase() + "_" + sessionManager.getKeyName().toUpperCase() + "_" + row + "_" + column + "_abc";
+            String name = courseCode.toUpperCase() + "_" + sessionManager.getKeyName().toUpperCase() + "_" + row + "_" + column;
+            Log.d("encrypt", "Before : " + name);
+            Encoder tool = new Encoder();
+
+            name = tool.Encode(name);
+            Log.d("encrypt", "After : " + name);
             if (radioGroup.getCheckedRadioButtonId() == rbBluetooth.getId()) {
                 network = "bluetooth";
                 mBluetoothAdapter.enable();

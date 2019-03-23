@@ -64,6 +64,8 @@ public class VirtualMap extends AppCompatActivity {
     private List<ScanResult> results;
     Set<String> wifiList = new HashSet<String>();
     ArrayList<String> newWifiList = new ArrayList<String>();
+    Encoder tool;
+
 
     final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -121,7 +123,7 @@ public class VirtualMap extends AppCompatActivity {
         tvProgress=findViewById(R.id.tvProgress);
         etWeight=findViewById(R.id.etWeight);
         virtualMapHelper = new VirtualMapHelper();
-
+        tool = new Encoder();
     }
 
     public void switchOnBluetooth() {
@@ -144,9 +146,10 @@ public class VirtualMap extends AppCompatActivity {
         while (i.hasNext()) {
             String next = i.next();
             if(!Utils.isBlank(next)) {
-                String student =next;
+                String student = next;
                 Log.d("entered",student);
                 //condition to be added
+                student = tool.Decode(student);
                 if(student.contains(courseCode)) {
                     students.add(student);
                 }
@@ -158,46 +161,10 @@ public class VirtualMap extends AppCompatActivity {
     }
     public void startWifiScanning() {
         if (!wifiManager.isWifiEnabled()) {
-                    Toast.makeText(this, "Enabling Wifi", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Enabling Wifi", Toast.LENGTH_LONG).show();
             wifiManager.setWifiEnabled(true);
         }
         Scan();
-    }
-    private boolean checkRollno(String s)
-    {
-        if(s.length() != 10)
-            return false;
-        String course[] = {"IIT", "BIM", "IHM"};
-        String year[] = {"2015", "2016", "2017", "2018"};
-        String t;
-        boolean validRoll = false, validYear = false, validNum = true;
-        t = s.substring(0, 3);
-        for (String x : course)
-        {
-            if(x.equals(t))
-            {
-                validRoll = true;
-                break;
-            }
-        }
-        t = s.substring(3, 7);
-        for (String x : year)
-        {
-            if(x.equals(t))
-            {
-                validYear = true;
-                break;
-            }
-        }
-        t = s.substring(7, 10);
-        for (int i = 0; i < t.length(); i++)
-        {
-            if(!(t.charAt(i) >= '0' && t.charAt(i) <= '9'))
-            {
-                validNum = false;
-            }
-        }
-        return (validRoll && validYear && validNum);
     }
     private boolean check_row_col(String row, String col)
     {
@@ -219,15 +186,14 @@ public class VirtualMap extends AppCompatActivity {
     }
     private void filterresults() {
 
-        for (String result : wifiList)
-        {
+        for (String result : wifiList) {
+            result = tool.Decode(result);
             String fields[] = result.split("_");
             Log.d("" + result, " " + result.length() + " $");
-            if(fields.length != 5)
+            if(fields.length != 4)
                 continue;
             Log.d("come_on_boy" + result, "valid");
-            if(check_row_col(fields[2], fields[3]) && fields[0].equals(courseCode))
-            {
+            if(check_row_col(fields[2], fields[3]) && fields[0].equals(courseCode)) {
                 newWifiList.add(result);
             }
         }
@@ -258,8 +224,7 @@ public class VirtualMap extends AppCompatActivity {
         wifiManager.setWifiEnabled(false);
         filterresults();
         Log.d("stopwifiscan", "checker" + newWifiList.size());
-        for (String s : newWifiList)
-        {
+        for (String s : newWifiList){
             Log.d("newboom", "name" + s);
         }
 //        newWifiList.add("SMAT330C_IIT2016001_1_1_abc");

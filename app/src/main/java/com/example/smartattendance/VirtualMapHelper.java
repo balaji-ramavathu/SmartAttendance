@@ -22,8 +22,11 @@ public class VirtualMapHelper {
     public void Update(ArrayList<String> data){
         ArrayList<Student> students = new ArrayList<Student>();
         for(String _str : data){
-            Student student = new Student(_str);
-            students.add(student);
+            String []splits = _str.split("_");
+            String []rolls = splits[1].split("$");
+            for(int i = 0; i < rolls.length; ++i){
+                students.add(new Student(splits[0], rolls[i], Integer.parseInt(splits[2]), Integer.parseInt(splits[3]), rolls[0]));
+            }
         }
         setLimits(students);
         extendSizes();

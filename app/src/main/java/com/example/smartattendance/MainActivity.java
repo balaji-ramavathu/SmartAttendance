@@ -64,10 +64,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBtnTeacher(View view) {
-//        Intent intent = new Intent(MainActivity.this, TeacherLoginActivity.class);
         Intent intent = new Intent(MainActivity.this, TeacherLoginActivity.class);
         startActivity(intent);
     }
-
-
 }

@@ -55,14 +55,7 @@ public class TeacherDashboardActivity extends AppCompatActivity {
             }
 
         });
-//        courseDao = Utils.getDaoSession(this).getCourseDao();
-//        courseList = courseDao.loadAll();
         _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
-        //Log.d("enteredDb", courseList.size() + "");
-        /*courseList.add("SMAT330C");
-        courseList.add("DMW630C");
-        courseList.add("OPT630C");
-        courseList.add("DMW630C");*/
         adapter = new DashboardRecyclerAdapter(this, _dbCourse);
         recyclerView = findViewById(R.id.rvCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

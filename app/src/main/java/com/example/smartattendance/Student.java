@@ -5,14 +5,12 @@ public class Student {
     String RollNumber;
     int Column, Row;
     String Owner;
-    Student(String received){
-        /*Form at of received : SubjectCOde_RollNumber_Column_Row_Owner Owner here is the person marking the attendance for the rollnumber */
-        String []splits = received.split("_");
-        this.SubjectCode = splits[0];
-        this.RollNumber = splits[1];
-        this.Row = Integer.parseInt(splits[2]);
-        this.Column = Integer.parseInt(splits[3]);
-        this.Owner = splits[4];
+    Student(String SubjectCode, String Rollnumber, int Row, int Column, String Owner){
+        this.SubjectCode = SubjectCode;
+        this.RollNumber = Rollnumber;
+        this.Row = Row;
+        this.Column = Column;
+        this.Owner = Owner;
     }
     boolean equals(Student student){
         if(this == student){
