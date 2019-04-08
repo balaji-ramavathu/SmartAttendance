@@ -85,6 +85,34 @@
             android:text="Mark attendance"
             android:onClick="onClickBtnMarkAttendance"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnaddsheet"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimaryDark"
+                android:text="Add Sheet"
+                android:onClick="onClickbtnAddSheet"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnshowattendance"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimaryDark"
+                android:text="Show Attendance"
+                android:onClick="onClickbtnShowAttendancec"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <!--<LinearLayout-->

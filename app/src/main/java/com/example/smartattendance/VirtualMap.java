@@ -86,9 +86,10 @@ public class VirtualMap extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             results = wifiManager.getScanResults();
             unregisterReceiver(this);
-            for (ScanResult scanResult : results) {
+            Log.d("Wifi", "Coming here");
+            for(ScanResult scanResult : results) {
                 wifiList.add(scanResult.SSID);
-//                Log.d("Wifi" , "" + scanResult.SSID + "$");
+                Log.d("Wifi" , "" + scanResult.SSID + "$");
             }
         };
     };
@@ -235,7 +236,6 @@ public class VirtualMap extends AppCompatActivity {
 //        newWifiList.add("SMAT330C_IIT2016001_2_3_abc");
 //        newWifiList.add("SMAT330C_IIT2016002_1_3_abc");
 //        newWifiList.add("SMAT330C_IIT2016002_2_3_abc");
-
         virtualMapHelper.Update(newWifiList);
         VMap = virtualMapHelper.getVMap();
         Log.d("rows", " " + virtualMapHelper.getMaxRow());
