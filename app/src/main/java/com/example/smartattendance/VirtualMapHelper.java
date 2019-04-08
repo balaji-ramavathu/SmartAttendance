@@ -1,5 +1,7 @@
 package com.example.smartattendance;
 
+import android.util.Log;
+
 import java.util.*;
 import static java.lang.Math.max;
 
@@ -13,13 +15,16 @@ public class VirtualMapHelper {
     ArrayList<Integer> ColumnWidth;
     int maxRow;
     int maxColumn,maxSeatCount;
+    List<String> presentRolls;
     VirtualMapHelper(){
         this.VMap = new ArrayList<ArrayList <ArrayList<Student > > > ();
         this.ColumnWidth = new ArrayList<Integer>();
         this.maxRow = 0;
         this.maxColumn = 0;
+        this.presentRolls=new ArrayList<>();
     }
     public void Update(ArrayList<String> data){
+        Log.d("entered","UPdate");
         ArrayList<Student> students = new ArrayList<Student>();
         for(String _str : data){
             String []splits = _str.split("_");
@@ -44,16 +49,15 @@ public class VirtualMapHelper {
             }
         }
     }
-    public ArrayList<String> getPresentStudents(){
-        ArrayList<String> ret = new ArrayList<String>();
+    public List<String> getPresentStudents(){
         for(int i = 0; i < this.maxColumn; ++i){
             for(int j = 0; j < this.maxRow; ++j){
                 for(Student _student : this.VMap.get(i).get(j)){
-                    ret.add(_student.RollNumber);
+                    presentRolls.add(_student.RollNumber);
                 }
             }
         }
-        return ret;
+        return presentRolls;
     }
     private void setLimits(ArrayList<Student> students){
         for(Student _student : students){

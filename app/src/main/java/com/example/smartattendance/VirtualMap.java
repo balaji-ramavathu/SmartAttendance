@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -45,6 +46,8 @@ public class VirtualMap extends AppCompatActivity {
     int rows,columns;
     RecyclerView.Adapter adapter;
     MaterialButton btnScan;
+    ImageButton btnAddRoll;
+    TextInputEditText etAddRoll;
     HorizontalScrollView scrollView;
     RecyclerView recyclerView;
     BluetoothAdapter mBluetoothAdapter;
@@ -86,9 +89,10 @@ public class VirtualMap extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             results = wifiManager.getScanResults();
             unregisterReceiver(this);
+            Log.d("entered","wifireciever:"+results.size());
             for (ScanResult scanResult : results) {
                 wifiList.add(scanResult.SSID);
-//                Log.d("Wifi" , "" + scanResult.SSID + "$");
+                Log.d("entered" , "" + scanResult.SSID + "$");
             }
         };
     };
@@ -104,6 +108,8 @@ public class VirtualMap extends AppCompatActivity {
             courseCode=getIntent().getStringExtra("courseCode");
         }
         btnScan=findViewById(R.id.btnScan);
+        btnAddRoll=findViewById(R.id.btnAddRoll);
+        etAddRoll=findViewById(R.id.etAddRoll);
 
         count=0;
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
@@ -186,13 +192,15 @@ public class VirtualMap extends AppCompatActivity {
     }
     private void filterresults() {
 
+        Log.d("entered","filterresults");
         for (String result : wifiList) {
             result = tool.Decode(result);
+            Log.d("entered",result);
             String fields[] = result.split("_");
-            Log.d("" + result, " " + result.length() + " $");
+            Log.d("entered ", " " + result + " $");
             if(fields.length != 4)
                 continue;
-            Log.d("come_on_boy" + result, "valid");
+            Log.d("entered" + result, "valid");
             if(check_row_col(fields[2], fields[3]) && fields[0].equals(courseCode)) {
                 newWifiList.add(result);
             }
@@ -269,13 +277,7 @@ public class VirtualMap extends AppCompatActivity {
                 btnScan.setText("Start Scanning");
                 stopBluetoothScanning();
 
-
-                rows = max(1, virtualMapHelper.getMaxRow());
-                columns = max(1, virtualMapHelper.getColumnWidthSize());
-                GridLayoutManager layoutManager = new GridLayoutManager(this, rows, LinearLayoutManager.HORIZONTAL, false);
-                recyclerView.setLayoutManager(layoutManager);
-                adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper);
-                recyclerView.setAdapter(adapter);
+                setAdapter();
             }
         }
         else {
@@ -307,7 +309,7 @@ public class VirtualMap extends AppCompatActivity {
         return Integer.valueOf(etWeight.getText().toString());
     }
     public void onClickSaveAttendance(View view) {
-        ArrayList<String> presentRolls=virtualMapHelper.getPresentStudents();
+        List<String> presentRolls=virtualMapHelper.getPresentStudents();
 
         ArrayList<dbCourse> _dbCourse = Paper.book().read("Courses",new ArrayList<dbCourse>());
         ArrayList<dbRollnumber> enrolledRollNumbers = new ArrayList<dbRollnumber>();
@@ -353,6 +355,36 @@ public class VirtualMap extends AppCompatActivity {
         returnIntent.putExtra("refresh", true);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+    }
+
+    public void setAdapter() {
+        Log.d("entered","setAdapter");
+        rows = max(1, virtualMapHelper.getMaxRow());
+        columns = max(1, virtualMapHelper.getColumnWidthSize());
+        GridLayoutManager layoutManager = new GridLayoutManager(this, rows, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper);
+        recyclerView.setAdapter(adapter);
+    }
+
+    public void onClickBtnAddRollMan(View view) {
+        Log.d("entered","onClickBtnAddRoll");
+        if(etAddRoll.getText()!=null) {
+            Log.d("entered","ifonClickBtnAddRoll");
+            String finalRoll=courseCode.toUpperCase()+"_"+etAddRoll.getText().toString();
+            Log.d("entered",finalRoll);
+            if(network.equals("wifi")) {
+                Log.d("entered","onClickBtnAddRollWIFI");
+                tool.Encode(finalRoll);
+                wifiList.add(finalRoll);
+                filterresults();
+                Log.d("entered",newWifiList.size()+"");
+                virtualMapHelper.Update(newWifiList);
+                VMap = virtualMapHelper.getVMap();
+                setAdapter();
+            }
+
+        }
     }
 }
 

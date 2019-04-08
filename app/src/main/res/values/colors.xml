@@ -6,6 +6,7 @@
     <color name="white">@android:color/white</color>
     <color name="light_pink">#f06292</color>
     <color name="light_yellow">#fdd835</color>
+    <color name="ply_wood">#f8dfa1</color>
 
     <!--for random generation-->
     <color name="dark_gray">#616161</color>
