@@ -87,7 +87,6 @@ public class CourseDetails extends AppCompatActivity {
     int updateSyncedct;
     int updateIndex;
     int updateWeight;
-//    int updateStudentct;
     /* For Google Sheets */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +206,8 @@ public class CourseDetails extends AppCompatActivity {
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
+            AlertDialogManager _dialog = new AlertDialogManager();
+            _dialog.showAlertDialog(this,"No Internet","To Create a Subject, Turn on Your Internet", false);
             Log.d("Spread", "No network connection available.");
         } else {
             new MakeRequestTask(mCredential, "Googleapp").execute();

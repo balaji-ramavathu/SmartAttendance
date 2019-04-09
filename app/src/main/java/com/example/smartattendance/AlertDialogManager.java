@@ -25,7 +25,7 @@ public class AlertDialogManager {
 
         if(status != null)
             // Setting alert dialog icon
-            alertDialog.setIcon((status) ? R.drawable.ic_check : R.drawable.ic_action_name);
+            alertDialog.setIcon((status) ? R.drawable.ic_checkattendance : R.drawable.ic_action_name);
 
         // Setting OK Button
         alertDialog.setButton("OK", new DialogInterface.OnClickListener() {

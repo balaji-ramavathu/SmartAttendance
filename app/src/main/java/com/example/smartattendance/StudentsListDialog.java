@@ -50,7 +50,7 @@ public class StudentsListDialog extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = null;
 
         if (convertView == null) {
@@ -66,7 +66,19 @@ public class StudentsListDialog extends BaseAdapter {
 
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.tvRollNumber.setText(studentsList.get(position).RollNumber);
+        holder.btnSubDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                studentsList.remove(position);
+                notifyDataSetChanged();
+            }
+        });
         return view;
     }
+
+    public List<Student> getStudentsList() {return studentsList;}
+
+
+
 
 }
