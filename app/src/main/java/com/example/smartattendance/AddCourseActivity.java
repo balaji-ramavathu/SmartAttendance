@@ -247,7 +247,6 @@ public class AddCourseActivity extends AppCompatActivity {
 
     }
 
-
     /* For Google Sheets */
 
     private void getResultsFromApi(ArrayList<String> _rollnumbers) {
@@ -258,7 +257,6 @@ public class AddCourseActivity extends AppCompatActivity {
         } else if (!isDeviceOnline()) {
             AlertDialogManager _dialog = new AlertDialogManager();
             _dialog.showAlertDialog(this,"No Internet","To Create a Subject, Turn on Your Internet", false);
-            Log.d("Spread", "No network connection available.");
         } else {
             new AddCourseActivity.MakeRequestTask1(mCredential, this.CourseCode, _rollnumbers).execute();
             Log.d("Spread", "Successsss ");

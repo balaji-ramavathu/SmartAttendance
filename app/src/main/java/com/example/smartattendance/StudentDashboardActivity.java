@@ -103,7 +103,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
     }
 
     public void onClickFabAddCourse(View view) {
-
         Intent intent = new Intent(StudentDashboardActivity.this, AddCourseActivity.class);
         startActivityForResult(intent, 2);
 
