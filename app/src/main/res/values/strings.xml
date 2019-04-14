@@ -1,4 +1,57 @@
 <resources>
     <string name="app_name">Smart Attendance</string>
     <string name="message">Smart attendance message</string>
+
+    <string-array name="help_headings">
+        <item>How the system works</item>
+        <item>Adding Courses</item>
+        <item>Taking Attendance</item>
+        <item>Marking Attendance</item>
+
+    </string-array>
+
+    <string-array name="help_infos">
+
+        <!--how this actually works info-->
+        <item>
+            \n1. Both Teacher and Student adds the teaching or enrolled courses.
+            \n2. Teacher will announce the Attendance mode to the students (WiFi or Bluetooth).
+            \n3. Students will select the mode, enter the row, column of their seated bench.
+            \n4. Teacher will get the attendance list either through Bluetooth or WiFi, which can be uploaded to Google Sheets by the teacher.
+            \n5. Teacher can cross check the present students with the help of Virtual Map of the class, and proxies if any, can be removed.
+            \n6. In case any student has not brought his phone, or somehow is not able to use the app, the Teacher can manually add his/her roll number.
+        </item>
+
+        <!--adding courses info-->
+        <item>1. Add Courses one at a time by tapping Plus button in the dashboard.
+        \n2. Enter the details of the course and the range of enrolled students of the course.
+        \n3. Tap the tick button and select your Google Sheets account to store the Attendance sheet.
+        \n4. Wait for the sheet to upload and that\'s it! You can see all the added courses in your dashboard.
+        \n5. This step requires internet connection.
+        </item>
+
+        <!--taking attendance info:-->
+        <item>1. Choose any course to take attendance from the dashboard.
+        \n2. Choose WiFi or Bluetooth mode and tap on \'Take Attendance\'.
+        \n3. Tap on \'Start Scanning\' and wait for a minute or two.
+        \n4. Tap on \'Stop Scanning\' and check the Virtual Map to visualise the present students in the class.
+        \n5. You can check for proxies by just cross checking the count of students in each bench.
+        \n6. You can add/remove any roll number by tapping on the bench in the virtual map.
+        \n7. Before saving the attendance, add the number of hours of the class and tap on \'Save Attendance\'.
+        \n8. That\'s it! You can go back and upload the attendance to Google sheets anytime.
+        </item>
+
+        <!--marking attendance info-->
+        <item>
+            \n1. Select the Course and Attendance mode.
+            \n2. Enter the row and column of the Bench.
+            \n3. If the attendance mode is WiFi, you need to turn on the Hotspot manually.
+            \n4. Hotspot name will be generated and will be copied directly to the clipboard once you tap on \'Mark Attendance\'.
+            \n5. Paste the generated name and turn on the Hotspot and go back.
+            \n6. If the attendance mode is Bluetooth, the process will be done automatically.
+        </item>
+
+    </string-array>
+
+
 </resources>

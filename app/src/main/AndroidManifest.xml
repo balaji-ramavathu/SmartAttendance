@@ -6,13 +6,13 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
     <application
         android:name=".SmartAttendanceApplication"
         android:allowBackup="true"
@@ -21,20 +21,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StudentCourseDetails"></activity>
-        <activity android:name=".StudentDashboardActivity" />
-        <activity android:name=".VirtualMap" />
-        <activity android:name=".AddCourseActivity" />
-        <activity android:name=".CourseDetails" />
-        <activity android:name=".WifiHelper" />
+        <activity android:name=".HelpActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".StudentCourseDetails"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".StudentDashboardActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".VirtualMap"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AddCourseActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CourseDetails"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".WifiHelper"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".TeacherDashboardActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
-        <activity android:name=".StudentLoginActivity" />
-        <activity android:name=".TeacherLoginActivity" />
-        <activity android:name=".Wifi_fun" />
-        <activity android:name=".Bluetooth_fun" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".StudentLoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".TeacherLoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Wifi_fun"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Bluetooth_fun"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

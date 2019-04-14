@@ -49,6 +49,17 @@ public class StudentDashboardActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 menuItem.setChecked(true);
+                int id=menuItem.getItemId();
+                switch (id){
+                    case R.id.nav_help:
+                        Intent intent =new Intent(StudentDashboardActivity.this,HelpActivity.class);
+                        startActivity(intent);
+
+
+                }
+
+
+
                 // close drawer when item is tapped
                 drawerLayout.closeDrawers();
                 return true;
