@@ -62,7 +62,7 @@ public class StudentCourseDetails extends AppCompatActivity {
             Log.d("encrypt", "Before : " + name);
             Encoder tool = new Encoder();
 
-            name = tool.Encode(name);
+            //name = tool.Encode(name);
             Log.d("encrypt", "After : " + name);
             if (radioGroup.getCheckedRadioButtonId() == rbBluetooth.getId()) {
                 network = "bluetooth";

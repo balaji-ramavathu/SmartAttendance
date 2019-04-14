@@ -155,7 +155,7 @@ public class VirtualMap extends AppCompatActivity {
                 String student = next;
                 Log.d("entered",student);
                 //condition to be added
-                student = tool.Decode(student);
+                //student = tool.Decode(student);
                 if(student.contains(courseCode)) {
                     students.add(student);
                 }
@@ -194,7 +194,7 @@ public class VirtualMap extends AppCompatActivity {
 
         Log.d("entered","filterresults");
         for (String result : wifiList) {
-            result = tool.Decode(result);
+            //result = tool.Decode(result);
             Log.d("entered",result);
             String fields[] = result.split("_");
             Log.d("entered ", " " + result + " $");
@@ -300,7 +300,7 @@ public class VirtualMap extends AppCompatActivity {
                 columns = max(1, virtualMapHelper.getColumnWidthSize());
                 GridLayoutManager layoutManager = new GridLayoutManager(this, rows, LinearLayoutManager.HORIZONTAL, false);
                 recyclerView.setLayoutManager(layoutManager);
-                adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper);
+                adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper, courseCode);
                 recyclerView.setAdapter(adapter);
             }
         }
@@ -363,29 +363,11 @@ public class VirtualMap extends AppCompatActivity {
         columns = max(1, virtualMapHelper.getColumnWidthSize());
         GridLayoutManager layoutManager = new GridLayoutManager(this, rows, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper);
+        adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper,courseCode);
         recyclerView.setAdapter(adapter);
     }
 
-    public void onClickBtnAddRollMan(View view) {
-        Log.d("entered","onClickBtnAddRoll");
-        if(etAddRoll.getText()!=null) {
-            Log.d("entered","ifonClickBtnAddRoll");
-            String finalRoll=courseCode.toUpperCase()+"_"+etAddRoll.getText().toString();
-            Log.d("entered",finalRoll);
-            if(network.equals("wifi")) {
-                Log.d("entered","onClickBtnAddRollWIFI");
-                tool.Encode(finalRoll);
-                wifiList.add(finalRoll);
-                filterresults();
-                Log.d("entered",newWifiList.size()+"");
-                virtualMapHelper.Update(newWifiList);
-                VMap = virtualMapHelper.getVMap();
-                setAdapter();
-            }
 
-        }
-    }
 }
 
 

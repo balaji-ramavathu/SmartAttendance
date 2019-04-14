@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +28,16 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
     VirtualMapHelper helper;
     ArrayList<ArrayList<ArrayList<Student>>> VMap;
     Activity activity;
+    String courseCode;
 
 
-    public VirtualMapAdapter(Activity activity,Context context, int rows, int columns, VirtualMapHelper helper) {
+    public VirtualMapAdapter(Activity activity,Context context, int rows, int columns, VirtualMapHelper helper, String courseCode) {
         this.activity=activity;
         this.context = context;
         this.rows = rows;
         this.columns = columns;
         this.helper = helper;
+        this.courseCode=courseCode;
 
     }
 
@@ -51,8 +55,8 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
     public void onBindViewHolder(@NonNull final VirtualMapViewHolder holder, int position) {
 
         VMap = helper.getVMap();
-        int row = position / rows;
-        int column = position % rows;
+        final int row = position / rows;
+        final int column = position % rows;
 
 
         if(VMap.size()!=0){
@@ -66,20 +70,22 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
                 @Override
                 public void onClick(View v) {
                     if(studentCount > 0) {
-                        showDialog(studentsInBench,holder);
+                        showDialog(studentsInBench,holder,row,column);
                     }
                 }
             });
         }
     }
-    public void showDialog(final List<Student> studentsInBench,final VirtualMapViewHolder holder) {
+    public void showDialog(final List<Student> studentsInBench,final VirtualMapViewHolder holder, final int row, final int column) {
 
         final Dialog dialog = new Dialog(context);
         View view = activity.getLayoutInflater().inflate(R.layout.student_list_dialog, null);
         ListView lv = view.findViewById(R.id.lvRollsDialog);
         MaterialButton btnOK = view.findViewById(R.id.btnDialogOK);
         MaterialButton btnCancel = view.findViewById(R.id.btnDialogCancel);
-        final StudentsListDialog adapter = new StudentsListDialog(activity,context, studentsInBench);
+        final TextInputEditText  etAddRoll = view.findViewById(R.id.etAddRoll);
+        final ImageButton btnAddRoll = view.findViewById(R.id.btnAddRollManually);
+        final StudentsListDialog adapter = new StudentsListDialog(activity,context, studentsInBench,courseCode);
         lv.setAdapter(adapter);
         dialog.setContentView(view);
         dialog.show();
@@ -95,6 +101,20 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
             }
         });
 
+        btnAddRoll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(etAddRoll.getText()!=null){
+                    String roll = etAddRoll.getText().toString();
+                    Student student=new Student(courseCode,roll,row,column,roll);
+                    studentsInBench.add(student);
+                    adapter.notifyDataSetChanged();
+
+                }
+
+            }
+        });
+
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,24 +125,6 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
 
     }
 
-    public int getRow(int tmp) {
-        int row;
-        tmp++;
-        if (tmp % columns == 0) {
-            row = tmp / columns;
-        } else {
-            row = tmp / columns + 1;
-        }
-        return row;
-    }
-    public int getColumn(int tmp) {
-        tmp++;
-        int column = tmp % columns;
-        if (column == 0){
-            column = columns;
-        }
-        return column;
-    }
     @Override
     public int getItemCount() {
         return rows * columns;

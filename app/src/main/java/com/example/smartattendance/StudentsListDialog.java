@@ -3,12 +3,15 @@ package com.example.smartattendance;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +24,18 @@ public class StudentsListDialog extends BaseAdapter {
     List<Student> studentsList;
     LayoutInflater layoutInflater;
     Activity activity;
-    public StudentsListDialog(Activity activity,Context context, List<Student> studentsList) {
+    String courseCode;
+    public StudentsListDialog(Activity activity,Context context, List<Student> studentsList,
+                              String courseCode) {
         this.studentsList=studentsList;
         layoutInflater=LayoutInflater.from(context);
         this.activity=activity;
+        this.courseCode=courseCode;
     }
 
     static class ViewHolder {
-        protected TextView tvRollNumber;
-        protected ImageButton btnSubDialog;
+        private TextView tvRollNumber;
+        private ImageButton btnSubRoll;
     }
 
 
@@ -57,16 +63,16 @@ public class StudentsListDialog extends BaseAdapter {
             LayoutInflater inflator = activity.getLayoutInflater();
             view = inflator.inflate(R.layout.student_list_dialog_item, null);
             final ViewHolder viewHolder = new ViewHolder();
-            viewHolder.tvRollNumber = (TextView) view.findViewById(R.id.tvRollNumberDialog);
-            viewHolder.btnSubDialog = (ImageButton) view.findViewById(R.id.btnSubRollDialog);
+            viewHolder.tvRollNumber =  view.findViewById(R.id.tvRollNumberDialog);
+            viewHolder.btnSubRoll =  view.findViewById(R.id.btnSubRollDialog);
             view.setTag(viewHolder);
         } else {
             view = convertView;
         }
 
-        ViewHolder holder = (ViewHolder) view.getTag();
+        final ViewHolder holder = (ViewHolder) view.getTag();
         holder.tvRollNumber.setText(studentsList.get(position).RollNumber);
-        holder.btnSubDialog.setOnClickListener(new View.OnClickListener() {
+        holder.btnSubRoll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 studentsList.remove(position);
