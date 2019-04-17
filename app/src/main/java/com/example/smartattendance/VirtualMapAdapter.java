@@ -112,7 +112,7 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
 
                 }
 
-            }
+                }
         });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {

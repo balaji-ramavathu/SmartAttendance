@@ -251,7 +251,7 @@ public class StudentCourseDetails extends AppCompatActivity {
             _dialog.showAlertDialog(this,"No Internet","To Create a Subject, Turn on Your Internet", false);
             Log.d("Spread", "No network connection available.");
         } else {
-            new StudentCourseDetails.MakeRequestTask(mCredential, "Googleapp").execute();
+            new StudentCourseDetails.MakeRequestTask(mCredential, "Googleapp", this).execute();
             Log.d("Spread", "Successsss ");
         }
     }
@@ -358,12 +358,14 @@ public class StudentCourseDetails extends AppCompatActivity {
     }
 
     private class MakeRequestTask extends AsyncTask<Void, Void, Void> {
+        Context context;
         private com.google.api.services.sheets.v4.Sheets mService = null;
         private double Percentage = 0;
         int status;
         private Exception mLastError = null;
         // The constructor
-        MakeRequestTask(GoogleAccountCredential credential, String title) {
+        MakeRequestTask(GoogleAccountCredential credential, String title, Context mcontext) {
+            this.context = mcontext;
             this.status = -1;
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
@@ -416,9 +418,8 @@ public class StudentCourseDetails extends AppCompatActivity {
             String spreadsheetId=GetSpreadsheetID(CurrentCourse.Spreadsheetlink);
 
             String range = "Sheet1";
-            mProgress.setMessage("Getting Attendance");
             ValueRange result = mService.spreadsheets().values().get(spreadsheetId, range).execute();
-            mProgress.setMessage("Calculating Attendance");
+
             int numRows = result.getValues() != null ? result.getValues().size() : 0;
             if(numRows == 0){
                 status = 1;
@@ -469,29 +470,30 @@ public class StudentCourseDetails extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             mProgress.show();
+            mProgress.setMessage("Geting Attendance");
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             mProgress.hide();
-            runOnUiThread(new Runnable(){
-                public void run(){
+//            runOnUiThread(new Runnable(){
+//                public void run(){
                     //show AlertDialog
                     if(status==1){
                         AlertDialogManager _dialog = new AlertDialogManager();
-                        _dialog.showAlertDialog(StudentCourseDetails.this,"Empty or Invalid sheet","Sheet is either empty or invalid", false);
+                        _dialog.showAlertDialog(context,"Empty or Invalid sheet","Sheet is either empty or invalid", false);
                     }
                     if(status == 2){
                         AlertDialogManager _dialog = new AlertDialogManager();
-                        _dialog.showAlertDialog(StudentCourseDetails.this,"Student not Found","Roll Number : " + sessionManager.getKeyName() + ", not found in google sheets", false);
+                        _dialog.showAlertDialog(context,"Student not Found","Roll Number : " + sessionManager.getKeyName() + ", not found in google sheets", false);
                     }
                     if(status == 3) {
                         AlertDialogManager _dialog = new AlertDialogManager();
-                        _dialog.showAlertDialog(StudentCourseDetails.this, "Percentage", "Attendance Percentage is : " + String.format("%.2f", Percentage), true);
+                        _dialog.showAlertDialog(context, "Percentage", "Attendance Percentage is : " + String.format("%.2f", Percentage), true);
                     }
-                }
-            });
+//                }
+//            });
         }
 
         @Override
