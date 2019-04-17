@@ -131,6 +131,11 @@ public class StudentCourseDetails extends AppCompatActivity {
     }
 
     public void onClickbtnShowAttendancec(View view){
+        if(this.CurrentCourse.Spreadsheetlink == null){
+            AlertDialogManager _dialog = new AlertDialogManager();
+            _dialog.showAlertDialog(this,"Sheet not added","Please add the sheet link first", false);
+            return;
+        }
         getResultsFromApi();
     }
     public void onClickbtnAddSheet(View view){

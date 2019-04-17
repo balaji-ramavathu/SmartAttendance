@@ -398,8 +398,19 @@ public class CourseDetails extends AppCompatActivity {
 
         private void putDataFromApi() throws IOException {
             String spreadsheetId=updateSpreadsheetID;
-
-            String range = "Sheet1!"+getColumn(updateSyncedct+2)+"1:"+getColumn(updateSyncedct+2+updateWeight-1)+Integer.toString(updateAttendance.size()+1);
+            String range = "Sheet1";
+            mProgress.setMessage("Getting Attendance");
+            ValueRange result = mService.spreadsheets().values().get(spreadsheetId, range).execute();
+            mProgress.setMessage("Calculating Attendance");
+            int numRows = result.getValues() != null ? result.getValues().size() : 0;
+            int columnsFilled = 0;
+            if(numRows > 0){
+                List<List<Object>> values = result.getValues();
+                for(List<Object> row : values){
+                    columnsFilled = max(columnsFilled, row.size());
+                }
+            }
+            range = "Sheet1!"+getColumn(columnsFilled+1)+"1:"+getColumn(columnsFilled+1+updateWeight-1)+Integer.toString(updateAttendance.size()+1);
             Log.d("sheetsUpdate",range);
             List<List<Object>> data;
             ArrayList<List<Object>> _tmp = new ArrayList<List<Object>>();
