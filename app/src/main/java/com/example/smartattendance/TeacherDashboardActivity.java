@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -62,6 +63,8 @@ public class TeacherDashboardActivity extends AppCompatActivity {
             }
 
         });
+        TextView nav_text = findViewById(R.id.nav_name);
+        nav_text.setText(new SessionManager(this).getKeyName());
         _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
         adapter = new DashboardRecyclerAdapter(this, _dbCourse);
         recyclerView = findViewById(R.id.rvCourses);

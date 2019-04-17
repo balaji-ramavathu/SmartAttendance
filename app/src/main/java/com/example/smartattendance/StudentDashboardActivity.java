@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -54,26 +55,16 @@ public class StudentDashboardActivity extends AppCompatActivity {
                     case R.id.nav_help:
                         Intent intent =new Intent(StudentDashboardActivity.this,HelpActivity.class);
                         startActivity(intent);
-
-
                 }
-
-
-
                 // close drawer when item is tapped
                 drawerLayout.closeDrawers();
                 return true;
             }
 
         });
-//        courseDao = Utils.getDaoSession(this).getCourseDao();
-//        courseList = courseDao.loadAll();
+        TextView nav_text = findViewById(R.id.nav_name);
+        nav_text.setText(new SessionManager(this).getKeyName());
         _dbCourse = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
-        //Log.d("enteredDb", courseList.size() + "");
-        /*courseList.add("SMAT330C");
-        courseList.add("DMW630C");
-        courseList.add("OPT630C");
-        courseList.add("DMW630C");*/
         adapter = new StudentDashboardAdapter(this, _dbCourse);
         recyclerView = findViewById(R.id.rvCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
