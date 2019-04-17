@@ -413,8 +413,6 @@ public class AddCourseActivity extends AppCompatActivity {
             Log.d("Spread", "SpreadSheetID: "+ newSpreadSheet.getSpreadsheetId());
             // this 'newSpreadsheet' is ready to use for write/read operation.
 
-            mProgress.setMessage("Adding Roll numbers to sheets");
-
             //adding roll numbers
 
 

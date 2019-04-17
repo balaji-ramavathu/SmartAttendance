@@ -399,9 +399,7 @@ public class CourseDetails extends AppCompatActivity {
         private void putDataFromApi() throws IOException {
             String spreadsheetId=updateSpreadsheetID;
             String range = "Sheet1";
-            mProgress.setMessage("Getting Attendance");
             ValueRange result = mService.spreadsheets().values().get(spreadsheetId, range).execute();
-            mProgress.setMessage("Calculating Attendance");
             int numRows = result.getValues() != null ? result.getValues().size() : 0;
             int columnsFilled = 0;
             if(numRows > 0){
@@ -443,6 +441,7 @@ public class CourseDetails extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             mProgress.show();
+            mProgress.setMessage("Updating Attendance");
         }
 
         @Override
