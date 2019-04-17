@@ -194,7 +194,7 @@ public class VirtualMap extends AppCompatActivity {
 
         Log.d("entered","filterresults");
         for (String result : wifiList) {
-            //result = tool.Decode(result);
+            result = tool.Decode(result);
             Log.d("entered",result);
             String fields[] = result.split("_");
             Log.d("entered ", " " + result + " $");

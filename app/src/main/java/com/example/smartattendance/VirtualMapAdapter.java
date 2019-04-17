@@ -69,7 +69,7 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
             holder.seat.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(studentCount > 0) {
+                    if(studentCount >= 0) {
                         showDialog(studentsInBench,holder,row,column);
                     }
                 }
@@ -105,7 +105,7 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
             @Override
             public void onClick(View v) {
                 if(etAddRoll.getText()!=null){
-                    String roll = etAddRoll.getText().toString();
+                    String roll = etAddRoll.getText().toString().toUpperCase();
                     Student student=new Student(courseCode,roll,row,column,roll);
                     studentsInBench.add(student);
                     adapter.notifyDataSetChanged();
