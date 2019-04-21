@@ -19,6 +19,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -43,7 +44,7 @@ import java.util.Set;
 import static java.lang.StrictMath.max;
 
 public class VirtualMap extends AppCompatActivity {
-    int rows,columns;
+    int rows, columns;
     RecyclerView.Adapter adapter;
     MaterialButton btnScan;
     ImageButton btnAddRoll;
@@ -53,14 +54,14 @@ public class VirtualMap extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter;
     Set<String> bluetoothList = new HashSet<String>();
 
-    String network,courseCode;
+    String network, courseCode;
     WifiManager wifiManager;
     int count;
     TextView tvProgress;
     TextInputEditText etWeight;
     VirtualMapHelper helper;
 
-//  Testing Virtual Map
+    //  Testing Virtual Map
     VirtualMapHelper virtualMapHelper;
     ArrayList<ArrayList<ArrayList<Student>>> VMap;
 
@@ -89,45 +90,46 @@ public class VirtualMap extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             results = wifiManager.getScanResults();
             unregisterReceiver(this);
-            Log.d("entered","wifireciever:"+results.size());
+            Log.d("entered", "wifireciever:" + results.size());
             for (ScanResult scanResult : results) {
                 wifiList.add(scanResult.SSID);
-                Log.d("entered" , "" + scanResult.SSID + "$");
+                Log.d("entered", "" + scanResult.SSID + "$");
             }
-        };
+        }
+
+        ;
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_virtual_map);
-        VirtualMapHelper helper=new VirtualMapHelper();
-        ArrayList<Integer> columnWidth=helper.getColumnWidth();
-        network=getIntent().getStringExtra("network");
-        if(!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
-            courseCode=getIntent().getStringExtra("courseCode");
+        VirtualMapHelper helper = new VirtualMapHelper();
+        ArrayList<Integer> columnWidth = helper.getColumnWidth();
+        network = getIntent().getStringExtra("network");
+        if (!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
+            courseCode = getIntent().getStringExtra("courseCode");
         }
-        btnScan=findViewById(R.id.btnScan);
-        btnAddRoll=findViewById(R.id.btnAddRoll);
-        etAddRoll=findViewById(R.id.etAddRoll);
+        btnScan = findViewById(R.id.btnScan);
+        btnAddRoll = findViewById(R.id.btnAddRoll);
+        etAddRoll = findViewById(R.id.etAddRoll);
 
-        count=0;
+        count = 0;
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
-        if(network.equals("bluetooth")) {
+        if (network.equals("bluetooth")) {
 
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             switchOnBluetooth();
             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             registerReceiver(mReceiver, filter);
-        }
-        else if(network.equals("wifi")) {
+        } else if (network.equals("wifi")) {
             wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         }
 
 
-        recyclerView=findViewById(R.id.rvVirtualMap);
-        tvProgress=findViewById(R.id.tvProgress);
-        etWeight=findViewById(R.id.etWeight);
+        recyclerView = findViewById(R.id.rvVirtualMap);
+        tvProgress = findViewById(R.id.tvProgress);
+        etWeight = findViewById(R.id.etWeight);
         virtualMapHelper = new VirtualMapHelper();
         tool = new Encoder();
     }
@@ -136,6 +138,7 @@ public class VirtualMap extends AppCompatActivity {
         mBluetoothAdapter.enable();
         mBluetoothAdapter.setName("test");
     }
+
     public void switchOffBluetooth() {
         mBluetoothAdapter.disable();
     }
@@ -151,12 +154,12 @@ public class VirtualMap extends AppCompatActivity {
         ArrayList<String> students = new ArrayList<String>();
         while (i.hasNext()) {
             String next = i.next();
-            if(!Utils.isBlank(next)) {
+            if (!Utils.isBlank(next)) {
                 String student = next;
-                Log.d("entered",student);
+                Log.d("entered", student);
                 //condition to be added
                 //student = tool.Decode(student);
-                if(student.contains(courseCode)) {
+                if (student.contains(courseCode)) {
                     students.add(student);
                 }
             }
@@ -165,6 +168,7 @@ public class VirtualMap extends AppCompatActivity {
         virtualMapHelper.Update(students);
         switchOffBluetooth();
     }
+
     public void startWifiScanning() {
         if (!wifiManager.isWifiEnabled()) {
             Toast.makeText(this, "Enabling Wifi", Toast.LENGTH_LONG).show();
@@ -172,67 +176,82 @@ public class VirtualMap extends AppCompatActivity {
         }
         Scan();
     }
-    private boolean check_row_col(String row, String col)
-    {
-        for (int i = 0; i < row.length(); i++)
-        {
-            if(!(row.charAt(i) >= '0' && row.charAt(i) <= '9'))
-            {
+
+    private boolean check_row_col(String row, String col) {
+        for (int i = 0; i < row.length(); i++) {
+            if (!(row.charAt(i) >= '0' && row.charAt(i) <= '9')) {
                 return false;
             }
         }
-        for (int i = 0; i < col.length(); i++)
-        {
-            if(!(col.charAt(i) >= '0' && col.charAt(i) <= '9'))
-            {
+        for (int i = 0; i < col.length(); i++) {
+            if (!(col.charAt(i) >= '0' && col.charAt(i) <= '9')) {
                 return false;
             }
         }
         return true;
     }
+
+    private boolean check_weight() {
+        if (TextUtils.isEmpty(etWeight.getText().toString())) {
+            return false;
+        }
+        String weight = etWeight.getText().toString();
+        for (int i = 0; i < weight.length(); i++) {
+            if (!(weight.charAt(i) >= '0' && weight.charAt(i) <= '9')) {
+                return false;
+            }
+        }
+        int _weight = Integer.parseInt(etWeight.getText().toString());
+        if (_weight < 0 || _weight > 10) {
+            return false;
+        }
+        return true;
+    }
+
     private void filterresults() {
 
-        Log.d("entered","filterresults");
+        Log.d("entered", "filterresults");
         for (String result : wifiList) {
             result = tool.Decode(result);
-            Log.d("entered",result);
+            Log.d("entered", result);
             String fields[] = result.split("_");
             Log.d("entered ", " " + result + " $");
-            if(fields.length != 4)
+            if (fields.length != 4)
                 continue;
             Log.d("entered" + result, "valid");
-            if(check_row_col(fields[2], fields[3]) && fields[0].equals(courseCode)) {
+            if (check_row_col(fields[2], fields[3]) && fields[0].equals(courseCode)) {
                 newWifiList.add(result);
             }
         }
     }
-    public void Scan(){
+
+    public void Scan() {
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(wifiManager.isWifiEnabled()) {
+                if (wifiManager.isWifiEnabled()) {
                     scanWifi();
                     Scan();
                     Log.d("timeloop", "every 7 seconds");
-                }
-                else
-                {
+                } else {
                     Log.d("Stopped", "gone");
                 }
             }
-        }, 7*1000);
+        }, 7 * 1000);
     }
+
     private void scanWifi() {
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         Toast.makeText(this, "Scanning WiFi ...", Toast.LENGTH_SHORT).show();
         wifiManager.startScan();
     }
+
     private void stopWifiScanning() {
         wifiManager.setWifiEnabled(false);
         filterresults();
         Log.d("stopwifiscan", "checker" + newWifiList.size());
-        for (String s : newWifiList){
+        for (String s : newWifiList) {
             Log.d("newboom", "name" + s);
         }
 //        newWifiList.add("SMAT330C_IIT2016001_1_1_abc");
@@ -250,6 +269,7 @@ public class VirtualMap extends AppCompatActivity {
         Log.d("rows", " " + virtualMapHelper.getMaxColumn());
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -264,7 +284,7 @@ public class VirtualMap extends AppCompatActivity {
 
 
     public void onClickBtnScan(View view) {
-        if(network.equals("bluetooth")) {
+        if (network.equals("bluetooth")) {
             count = 1 - count;
             if (count == 1) {
                 tvProgress.setText("Started Scanning");
@@ -279,8 +299,7 @@ public class VirtualMap extends AppCompatActivity {
 
                 setAdapter();
             }
-        }
-        else {
+        } else {
             count = 1 - count;
             if (count == 1) {
                 tvProgress.setText("Started Scanning");
@@ -292,9 +311,9 @@ public class VirtualMap extends AppCompatActivity {
                 tvProgress.setTextColor(getResources().getColor(R.color.dark_green));
                 btnScan.setText("Start Scanning");
                 stopWifiScanning();
-                Log.d("Size : ",newWifiList.size()+"");
-                for (int i=0;i<newWifiList.size();i++) {
-                    Log.d("newWifiList : ",newWifiList.get(i));
+                Log.d("Size : ", newWifiList.size() + "");
+                for (int i = 0; i < newWifiList.size(); i++) {
+                    Log.d("newWifiList : ", newWifiList.get(i));
                 }
                 rows = max(1, virtualMapHelper.getMaxRow());
                 columns = max(1, virtualMapHelper.getColumnWidthSize());
@@ -305,31 +324,36 @@ public class VirtualMap extends AppCompatActivity {
             }
         }
     }
+
     public int getWeight() {
         return Integer.valueOf(etWeight.getText().toString());
     }
-    public void onClickSaveAttendance(View view) {
-        List<String> presentRolls=virtualMapHelper.getPresentStudents();
 
-        ArrayList<dbCourse> _dbCourse = Paper.book().read("Courses",new ArrayList<dbCourse>());
+    public void onClickSaveAttendance(View view) {
+        List<String> presentRolls = virtualMapHelper.getPresentStudents();
+        if (check_weight() == false) {
+            Toast.makeText(this, "Enter valid weightage", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ArrayList<dbCourse> _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
         ArrayList<dbRollnumber> enrolledRollNumbers = new ArrayList<dbRollnumber>();
-        for(dbCourse ele : _dbCourse){
-            if(ele.courseid.equals(courseCode)){
+        for (dbCourse ele : _dbCourse) {
+            if (ele.courseid.equals(courseCode)) {
                 enrolledRollNumbers = ele.rollnumbers;
             }
         }
-        String date=Utils.getDate();
-        int weight=getWeight();
-        dbAttendance attendance=new dbAttendance();
-        attendance.courseId=courseCode;
-        attendance.date=date;
-        attendance.weight=weight;
-        attendance.isSynced=0;
+        String date = Utils.getDate();
+        int weight = getWeight();
+        dbAttendance attendance = new dbAttendance();
+        attendance.courseId = courseCode;
+        attendance.date = date;
+        attendance.weight = weight;
+        attendance.isSynced = 0;
 
-        Log.d("sheetUpdateVM","from courses" + Integer.toString(enrolledRollNumbers.size()));
-        for(int i = 0; i < enrolledRollNumbers.size(); ++i){
-            for(int j = i; j < enrolledRollNumbers.size(); ++j){
-                if(enrolledRollNumbers.get(i).rollnumber.compareTo(enrolledRollNumbers.get(j).rollnumber) > 0){
+        Log.d("sheetUpdateVM", "from courses" + Integer.toString(enrolledRollNumbers.size()));
+        for (int i = 0; i < enrolledRollNumbers.size(); ++i) {
+            for (int j = i; j < enrolledRollNumbers.size(); ++j) {
+                if (enrolledRollNumbers.get(i).rollnumber.compareTo(enrolledRollNumbers.get(j).rollnumber) > 0) {
                     dbRollnumber _tmp = enrolledRollNumbers.get(i);
                     enrolledRollNumbers.set(i, enrolledRollNumbers.get(j));
                     enrolledRollNumbers.set(j, _tmp);
@@ -338,16 +362,16 @@ public class VirtualMap extends AppCompatActivity {
         }
 
 
-        for(int i=0;i<enrolledRollNumbers.size();i++) {
-            for(int j=0;j<presentRolls.size();j++) {
-                if(enrolledRollNumbers.get(i).rollnumber.equals(presentRolls.get(j))) {
+        for (int i = 0; i < enrolledRollNumbers.size(); i++) {
+            for (int j = 0; j < presentRolls.size(); j++) {
+                if (enrolledRollNumbers.get(i).rollnumber.equals(presentRolls.get(j))) {
                     enrolledRollNumbers.get(i).isPresent = 1;
                 }
             }
         }
 
         attendance.rollnumbers = enrolledRollNumbers;
-        Log.d("sheetUpdateVMAP",Integer.toString(enrolledRollNumbers.size()));
+        Log.d("sheetUpdateVMAP", Integer.toString(enrolledRollNumbers.size()));
         ArrayList<dbAttendance> _at = Paper.book().read("Attendance", new ArrayList<dbAttendance>());
         _at.add(attendance);
         Paper.book().write("Attendance", _at);
@@ -358,12 +382,12 @@ public class VirtualMap extends AppCompatActivity {
     }
 
     public void setAdapter() {
-        Log.d("entered","setAdapter");
+        Log.d("entered", "setAdapter");
         rows = max(1, virtualMapHelper.getMaxRow());
         columns = max(1, virtualMapHelper.getColumnWidthSize());
         GridLayoutManager layoutManager = new GridLayoutManager(this, rows, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper,courseCode);
+        adapter = new VirtualMapAdapter(VirtualMap.this, this, rows, columns, virtualMapHelper, courseCode);
         recyclerView.setAdapter(adapter);
     }
 
