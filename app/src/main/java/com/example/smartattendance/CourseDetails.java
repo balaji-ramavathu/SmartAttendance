@@ -1,6 +1,7 @@
 package com.example.smartattendance;
 
 import androidx.annotation.Dimension;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -18,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
+import androidx.appcompat.widget.Toolbar;
 import io.paperdb.Paper;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -92,14 +95,25 @@ public class CourseDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_details);
+
+        if(!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
+            this.courseCode=getIntent().getStringExtra("courseCode");
+        }
+
+
+        Toolbar toolbar = findViewById(R.id.toolbarCourseDetails);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(this.courseCode);
+
+
         al = new ArrayList<String>();
         radioGroup=findViewById(R.id.rgNetwork);
         rbWifi=findViewById(R.id.rbWifi);
         rbBluetooth=findViewById(R.id.rbBluetooth);
         btnTakeAttendance=findViewById(R.id.btnTakeAttendence);
-        if(!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
-            this.courseCode=getIntent().getStringExtra("courseCode");
-        }
+
         _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
         _dbAttendance = Paper.book().read("Attendance", new ArrayList<dbAttendance>());
         this.updateSyncedct = 0;
@@ -145,6 +159,16 @@ public class CourseDetails extends AppCompatActivity {
         });
         /* Google Sheets */
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void UpdateSheets(View v){

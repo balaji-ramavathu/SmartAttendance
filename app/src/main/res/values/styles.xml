@@ -13,5 +13,9 @@
         <item name="android:layout_marginBottom">2dp</item>
         <item name="android:textColor">@color/black</item>
     </style>
+    
+    <style name="ToolbarTheme" parent="@style/Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
 
 </resources>

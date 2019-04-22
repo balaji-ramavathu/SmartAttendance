@@ -1,6 +1,8 @@
 package com.example.smartattendance;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import io.paperdb.Paper;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -24,6 +26,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -90,6 +93,13 @@ public class StudentCourseDetails extends AppCompatActivity {
         if (!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
             courseCode = getIntent().getStringExtra("courseCode");
         }
+
+        Toolbar toolbar = findViewById(R.id.toolbarCourseDetails);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(this.courseCode);
+
         radioGroup = findViewById(R.id.rgNetwork);
         rbWifi = findViewById(R.id.rbWifi);
         trow = findViewById(R.id.etRow);
@@ -126,6 +136,16 @@ public class StudentCourseDetails extends AppCompatActivity {
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
         /* Google Sheets*/
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void onClickbtnShowAttendancec(View view) {
