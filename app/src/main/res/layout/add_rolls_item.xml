@@ -3,51 +3,50 @@
     android:id="@+id/llRolls"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="8dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/StudentSuffixToInputLayout"
+    <TextView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="Suffix">
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:textSize="18sp"
+        android:text="IIT2016"
+        android:gravity="center_vertical"
+        android:textColor="@color/black"
+        android:padding="4dp"
+        android:id="@+id/tvSuffix"/>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSuffix"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/StudentLimitFromInputLayout"
+    <TextView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="Roll From">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etRollFrom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/StudentLimitToInputLayout"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:textSize="18sp"
+        android:padding="4dp"
+        android:text="97"
+        android:gravity="center_vertical"
+        android:textColor="@color/black"
+        android:id="@+id/tvFrom"/>
+    <TextView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="Roll To"
-        android:inputType="number">
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:textSize="18sp"
+        android:padding="4dp"
+        android:text="145"
+        android:gravity="center_vertical"
+        android:textColor="@color/black"
+        android:id="@+id/tvTo"/>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etRollTo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        android:id="@+id/btnRemoveRolls"
+        android:src="@drawable/ic_close_black_24dp"
+        android:background="@color/white"
+        android:layout_weight="2"
+        />
 
 
 </LinearLayout>

@@ -9,7 +9,9 @@
     </style>
 
     <style name="MenuItems" parent="AppTheme">
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>

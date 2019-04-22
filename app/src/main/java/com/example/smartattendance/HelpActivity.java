@@ -26,7 +26,7 @@ public class HelpActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("How to use");
+        actionBar.setTitle(R.string.help_title);
 
         lvHelp =findViewById(R.id.lvHelp);
         headings=new ArrayList<>();

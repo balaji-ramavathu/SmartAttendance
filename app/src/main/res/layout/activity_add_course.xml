@@ -6,27 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".AddCourseActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarAddCourse"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:titleTextColor="@color/white" />
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:id="@+id/toolbarAddCourse"
-                android:background="@color/colorPrimary"
-                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-                app:titleTextColor="@color/white"/>
-
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cvCourseDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:elevation="4dp"
                 app:cardCornerRadius="4dp">
 
@@ -42,6 +45,7 @@
                         android:layout_height="wrap_content"
                         android:padding="4dp"
                         android:text="Course Details"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="20sp" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +58,8 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etCourseCode"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapCharacters"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,53 +84,115 @@
                 android:id="@+id/cvStudentDetails"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:elevation="4dp"
+                android:layout_below="@+id/cvCourseDetails"
                 app:cardCornerRadius="4dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
                     android:layout_margin="8dp">
+
+                    <TextView
+                        android:id="@+id/tvStudentDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:text="Student Details"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="20sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:id="@+id/tvStudentDetails"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvStudentDetails"
+                        android:id="@+id/llAddRolls"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/StudentSuffixToInputLayout"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="5"
-                            android:padding="4dp"
-                            android:text="Student Details"
-                            android:textSize="20sp" />
+                            android:layout_weight="2"
+                            android:layout_margin="4dp"
+                            android:hint="eg: IIT2016">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etSuffix"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapCharacters"
+                                android:imeOptions="actionNext"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/StudentLimitFromInputLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2"
+                            android:layout_margin="4dp"
+                            android:hint="Roll From">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etRollFrom"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:imeOptions="actionNext"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/StudentLimitToInputLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2"
+                            android:layout_margin="4dp"
+                            android:hint="Roll To">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etRollTo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:imeOptions="actionGo"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
                         <ImageButton
+                            android:id="@+id/btnAddRoll"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:id="@+id/btnAddRoll"
-                            android:src="@drawable/ic_add"
-                            android:background="@color/colorAccent"
-                            android:onClick="onClickBtnAddRoll"/>
+                            android:onClick="onClickBtnAddRoll"
+                            android:background="@color/white"
+                            android:src="@drawable/ic_add_circle_24dp" />
 
                     </LinearLayout>
+
 
                     <ListView
                         android:id="@+id/lvRolls"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="8dp">
+                        android:layout_marginBottom="32dp"
+                        android:layout_below="@id/llAddRolls">
 
                     </ListView>
 
-                </LinearLayout>
+                </RelativeLayout>
 
 
             </com.google.android.material.card.MaterialCardView>
+        </RelativeLayout>
 
-        </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
@@ -133,7 +200,8 @@
         android:id="@+id/fabAddCourseOk"
         android:layout_gravity="bottom|right"
         android:src="@drawable/ic_check"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:onClick="onClickFabAddCourseOk"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
