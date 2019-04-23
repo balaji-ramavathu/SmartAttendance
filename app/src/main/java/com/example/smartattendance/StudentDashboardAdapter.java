@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +18,23 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import io.paperdb.Paper;
 
 public class StudentDashboardAdapter extends RecyclerView.Adapter<StudentDashboardAdapter.DashboardViewHolder> {
     Context context;
     ArrayList<dbCourseStudent> courseList;
     MaterialCardView cardView;
+    StudentDashboardActivity activity;
+    private int mRecentlyDeletedItemPosition;
+    private dbCourseStudent mRecentlyDeletedItem;
 
     private String[] mColorArray = {"dark_green", "dark_orange", "light_kaki", "light_red",
             "dark_gray", "dark_red", "chocolate", "dark_pink", "violet",
             "dark_kaki", "black"};
 
-    public StudentDashboardAdapter(Context context, ArrayList<dbCourseStudent> list) {
+    public StudentDashboardAdapter(Context context, StudentDashboardActivity activity, ArrayList<dbCourseStudent> list) {
         this.context = context;
+        this.activity=activity;
         this.courseList = list;
     }
 
@@ -48,8 +54,7 @@ public class StudentDashboardAdapter extends RecyclerView.Adapter<StudentDashboa
     public DashboardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.dashboard_recycler_item, parent, false);
-        RelativeLayout relativeLayout = (RelativeLayout) view.getRootView();
-        cardView = (MaterialCardView) relativeLayout.getChildAt(0);
+        cardView = (MaterialCardView) view.getRootView();
         DashboardViewHolder viewHolder = new DashboardViewHolder(view);
         return viewHolder;
     }
@@ -80,6 +85,37 @@ public class StudentDashboardAdapter extends RecyclerView.Adapter<StudentDashboa
         });
 
     }
+
+
+    public void deleteItem(int position) {
+        mRecentlyDeletedItem = courseList.get(position);
+        mRecentlyDeletedItemPosition = position;
+        courseList.remove(position);
+        Paper.book().write("SCourses",courseList);
+        notifyItemRemoved(position);
+        showUndoSnackbar();
+    }
+
+    public void showUndoSnackbar() {
+        View view = activity.findViewById(R.id.coordinatorStudentDashboard);
+        Snackbar snackbar = Snackbar.make(view, "Course Deleted",
+                Snackbar.LENGTH_LONG);
+        snackbar.setAction("Undo", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                undoDelete();
+            }
+        });
+        snackbar.setActionTextColor(context.getResources().getColor(R.color.colorPrimary));
+        snackbar.show();
+    }
+    private void undoDelete() {
+        courseList.add(mRecentlyDeletedItemPosition,mRecentlyDeletedItem);
+        notifyItemInserted(mRecentlyDeletedItemPosition);
+        Paper.book().write("SCourses",courseList);
+    }
+
+
 
     @Override
     public int getItemCount() {

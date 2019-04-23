@@ -1,48 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:id="@+id/cvCourseRecyclerItem"
+    android:elevation="4dp"
+    app:cardCornerRadius="8dp"
+    android:layout_margin="8dp">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/cvCourseRecyclerItem"
-        android:elevation="4dp"
-        app:cardCornerRadius="8dp"
-        android:layout_margin="8dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvCourseCode"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:text="SMAT330C"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+        <TextView
+            android:id="@+id/tvCourseName"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:text="Mathematics III"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvCourseCode"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                android:text="SMAT330C"
-                android:textColor="@color/white"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/tvCourseName"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                android:text="Mathematics III"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-
-
-
-</RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

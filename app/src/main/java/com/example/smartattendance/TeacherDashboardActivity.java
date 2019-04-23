@@ -4,18 +4,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.paperdb.Paper;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,7 +34,7 @@ import java.util.ArrayList;
 public class TeacherDashboardActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    DashboardRecyclerAdapter adapter;
     FloatingActionButton fab;
     ArrayList<dbCourse> _dbCourse;
     @Override
@@ -66,10 +73,13 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         TextView nav_text = findViewById(R.id.nav_name);
         nav_text.setText(new SessionManager(this).getKeyName());
         _dbCourse = Paper.book().read("Courses", new ArrayList<dbCourse>());
-        adapter = new DashboardRecyclerAdapter(this, _dbCourse);
+        adapter = new DashboardRecyclerAdapter(this,TeacherDashboardActivity.this, _dbCourse);
         recyclerView = findViewById(R.id.rvCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+        ItemTouchHelper itemTouchHelper = new
+                ItemTouchHelper(new SwipeToDeleteCallback(adapter));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
     }
@@ -111,4 +121,63 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         startActivityForResult(intent, 2);
 
     }
+
+    public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
+        private DashboardRecyclerAdapter mAdapter;
+        private Drawable icon;
+        private final ColorDrawable background;
+
+        public SwipeToDeleteCallback(DashboardRecyclerAdapter adapter) {
+            super(0, ItemTouchHelper.LEFT);
+            mAdapter = adapter;
+            icon = ContextCompat.getDrawable(getApplicationContext(),
+                    R.drawable.ic_delete_24dp);
+            background = new ColorDrawable(Color.RED);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            int position = viewHolder.getAdapterPosition();
+            mAdapter.deleteItem(position);
+        }
+
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            super.onChildDraw(c, recyclerView, viewHolder, dX,
+                    dY, actionState, isCurrentlyActive);
+
+            View itemView = viewHolder.itemView;
+            int backgroundCornerOffset = 20;
+
+            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+            int iconTop = itemView.getTop() + (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+            int iconBottom = iconTop + icon.getIntrinsicHeight();
+
+            if (dX > 0) { // Swiping to the right
+                background.setBounds(itemView.getLeft(), itemView.getTop(),
+                        itemView.getLeft() + ((int) dX) + backgroundCornerOffset,
+                        itemView.getBottom());
+
+            } else if (dX < 0) { // Swiping to the left
+                int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
+                int iconRight = itemView.getRight() - iconMargin;
+                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+
+                background.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset,
+                        itemView.getTop(), itemView.getRight(), itemView.getBottom());
+            }
+            else { // view is unSwiped
+                background.setBounds(0, 0, 0, 0);
+            }
+            background.draw(c);
+            icon.draw(c);
+        }
+    }
+
+
 }

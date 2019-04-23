@@ -118,7 +118,7 @@ public class CourseDetails extends AppCompatActivity {
         _dbAttendance = Paper.book().read("Attendance", new ArrayList<dbAttendance>());
         this.updateSyncedct = 0;
         for(dbAttendance element : _dbAttendance){
-            if(element.isSynced == 0){
+            if(element.isSynced == 0 && element.courseId.equals(this.courseCode)){
                 al.add(element.date);
             }
             else{
