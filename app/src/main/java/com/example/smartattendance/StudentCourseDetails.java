@@ -161,7 +161,14 @@ public class StudentCourseDetails extends AppCompatActivity {
                 network = "wifi";
                 ClipData clip = ClipData.newPlainText("name", name);
                 clipboard.setPrimaryClip(clip);
-                startActivityForResult(new Intent(Settings.ACTION_WIRELESS_SETTINGS), 0);
+                String deviceMan = android.os.Build.MANUFACTURER;
+                Log.d("Company", deviceMan);
+                if(deviceMan.equals("Xiaomi")) {
+                    startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);
+                }
+                else{
+                    startActivityForResult(new Intent(Settings.ACTION_WIRELESS_SETTINGS), 0);
+                }
             }
         }
     }
