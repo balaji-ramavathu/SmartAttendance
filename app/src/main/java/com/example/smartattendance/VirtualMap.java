@@ -166,6 +166,7 @@ public class VirtualMap extends AppCompatActivity {
         }
 
         virtualMapHelper.Update(students);
+        bluetoothList.clear();
         switchOffBluetooth();
     }
 
@@ -254,16 +255,9 @@ public class VirtualMap extends AppCompatActivity {
         for (String s : newWifiList) {
             Log.d("newboom", "name" + s);
         }
-//        newWifiList.add("SMAT330C_IIT2016001_1_1_abc");
-//        newWifiList.add("SMAT330C_IIT2016001_1_4_abc");
-//        newWifiList.add("SMAT330C_IIT2016001_4_1_abc");
-//        newWifiList.add("SMAT330C_IIT2016001_4_4_abc");
-//        newWifiList.add("SMAT330C_IIT2016001_1_3_abc");
-//        newWifiList.add("SMAT330C_IIT2016001_2_3_abc");
-//        newWifiList.add("SMAT330C_IIT2016002_1_3_abc");
-//        newWifiList.add("SMAT330C_IIT2016002_2_3_abc");
-
         virtualMapHelper.Update(newWifiList);
+        newWifiList.clear();
+        wifiList.clear();
         VMap = virtualMapHelper.getVMap();
         Log.d("rows", " " + virtualMapHelper.getMaxRow());
         Log.d("rows", " " + virtualMapHelper.getMaxColumn());
@@ -277,9 +271,6 @@ public class VirtualMap extends AppCompatActivity {
         if (network.equals("bluetooth")) {
             unregisterReceiver(mReceiver);
         }
-//        else {
-//            unregisterReceiver(wifiReceiver);
-//        }
     }
 
 

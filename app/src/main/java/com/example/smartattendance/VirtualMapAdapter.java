@@ -60,11 +60,8 @@ public class VirtualMapAdapter extends RecyclerView.Adapter<VirtualMapAdapter.Vi
 
 
         if(VMap.size()!=0){
-//            final int studentCount = VMap.get(row).get(columns - column - 1).size();
-//            final ArrayList<Student> studentsInBench = VMap.get(row).get(columns - column - 1);
             final int studentCount = VMap.get(row).get(rows - column - 1).size();
             final List<Student> studentsInBench = VMap.get(row).get(rows - column - 1);
-//            holder.seat.setText(String.valueOf(position) + String.valueOf(row) + String.valueOf(column));
             holder.seat.setText(String.valueOf(studentsInBench.size()));
             holder.seat.setOnClickListener(new View.OnClickListener() {
                 @Override
