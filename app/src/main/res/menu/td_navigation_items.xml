@@ -2,11 +2,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_courses"
-            android:title="courses"
+            android:title="Courses"
+            android:icon="@drawable/ic_list_black_24dp"
             />
         <item
             android:id="@+id/nav_help"
-            android:title="How to use"
+            android:title="@string/help_title"
             android:icon="@drawable/ic_info_outline_black_24dp"/>
     </group>
 </menu>

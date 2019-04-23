@@ -1,6 +1,8 @@
 package com.example.smartattendance;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import io.paperdb.Paper;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -24,6 +26,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -60,14 +63,14 @@ public class StudentCourseDetails extends AppCompatActivity {
     MaterialButton btnAddSheet;
     MaterialButton btnShowAttendance;
     RadioGroup radioGroup;
-    RadioButton rbWifi,rbBluetooth;
-    String network,courseCode;
+    RadioButton rbWifi, rbBluetooth;
+    String network, courseCode;
     ClipboardManager clipboard;
     WifiManager wifiManager;
     BluetoothAdapter mBluetoothAdapter;
     SessionManager sessionManager;
-    int row,column;
-    EditText trow,tcolumn;
+    int row, column;
+    EditText trow, tcolumn;
     ArrayList<dbCourseStudent> _dbCourse;
     dbCourseStudent CurrentCourse;
 
@@ -83,36 +86,41 @@ public class StudentCourseDetails extends AppCompatActivity {
     /* For Google Sheets */
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_course_details);
-        if(!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
-            courseCode=getIntent().getStringExtra("courseCode");
+        if (!Utils.isBlank(getIntent().getStringExtra("courseCode"))) {
+            courseCode = getIntent().getStringExtra("courseCode");
         }
-        radioGroup=findViewById(R.id.rgNetwork);
-        rbWifi=findViewById(R.id.rbWifi);
-        trow=findViewById(R.id.etRow);
-        tcolumn=findViewById(R.id.etColumn);
-        rbBluetooth=findViewById(R.id.rbBluetooth);
-        btnMarkAttendance=findViewById(R.id.btnMarkAttendence);
-        btnAddSheet=findViewById(R.id.btnaddsheet);
-        btnShowAttendance=findViewById(R.id.btnshowattendance);
+
+        Toolbar toolbar = findViewById(R.id.toolbarCourseDetails);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(this.courseCode);
+
+        radioGroup = findViewById(R.id.rgNetwork);
+        rbWifi = findViewById(R.id.rbWifi);
+        trow = findViewById(R.id.etRow);
+        tcolumn = findViewById(R.id.etColumn);
+        rbBluetooth = findViewById(R.id.rbBluetooth);
+        btnMarkAttendance = findViewById(R.id.btnMarkAttendence);
+        btnAddSheet = findViewById(R.id.btnaddsheet);
+        btnShowAttendance = findViewById(R.id.btnshowattendance);
         _dbCourse = Paper.book().read("SCourses", new ArrayList<dbCourseStudent>());
         Log.d("update", courseCode);
         Log.d("update", Integer.toString(_dbCourse.size()));
-        for(dbCourseStudent crse : _dbCourse){
-            if(crse.Course.equals(courseCode)){
+        for (dbCourseStudent crse : _dbCourse) {
+            if (crse.Course.equals(courseCode)) {
                 Log.d("update", "Course initalised");
                 this.CurrentCourse = crse;
                 break;
             }
         }
-        if(CurrentCourse.Spreadsheetlink==null){
+        if (CurrentCourse.Spreadsheetlink == null) {
             btnAddSheet.setText("Add Sheet");
-        }
-        else{
+        } else {
             btnAddSheet.setText("Update Sheet");
         }
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -130,17 +138,29 @@ public class StudentCourseDetails extends AppCompatActivity {
         /* Google Sheets*/
     }
 
-    public void onClickbtnShowAttendancec(View view){
-        if(this.CurrentCourse.Spreadsheetlink == null){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickbtnShowAttendancec(View view) {
+        if (this.CurrentCourse.Spreadsheetlink == null) {
             AlertDialogManager _dialog = new AlertDialogManager();
-            _dialog.showAlertDialog(this,"Sheet not added","Please add the sheet link first", false);
+            _dialog.showAlertDialog(this, "Sheet not added", "Please add the sheet link first", false);
             return;
         }
         getResultsFromApi();
     }
-    public void onClickbtnAddSheet(View view){
+
+    public void onClickbtnAddSheet(View view) {
         showDialog(this.CurrentCourse.Spreadsheetlink);
     }
+
     public void onClickBtnMarkAttendance(View view) {
         if (verify()) {
             row = Integer.parseInt(trow.getText().toString());
@@ -155,7 +175,7 @@ public class StudentCourseDetails extends AppCompatActivity {
                 network = "bluetooth";
                 mBluetoothAdapter.enable();
                 mBluetoothAdapter.setName(name);
-                Log.d("name",name);
+                Log.d("name", name);
 
             } else {
                 network = "wifi";
@@ -172,19 +192,21 @@ public class StudentCourseDetails extends AppCompatActivity {
             }
         }
     }
-    private String GetSpreadsheetID(String link){
+
+    private String GetSpreadsheetID(String link) {
         String[] components = link.split("/");
         int index = -1;
-        for(int i = 0; i < components.length; ++i){
-            if(components[i].equals("d")){
+        for (int i = 0; i < components.length; ++i) {
+            if (components[i].equals("d")) {
                 index = i;
             }
         }
-        if(index == -1 || index == components.length-1){
+        if (index == -1 || index == components.length - 1) {
             return null;
         }
-        return components[index+1];
+        return components[index + 1];
     }
+
     public void showDialog(String sheetlink) {
 
         final Dialog dialog = new Dialog(this);
@@ -192,7 +214,7 @@ public class StudentCourseDetails extends AppCompatActivity {
         final TextInputEditText tvSheetlink = view.findViewById(R.id.tvSheetLink);
         MaterialButton btnok = view.findViewById(R.id.btnaddsheetok);
         MaterialButton btncancel = view.findViewById(R.id.btnaddsheetcancel);
-        if(sheetlink != null){
+        if (sheetlink != null) {
             tvSheetlink.setText(sheetlink);
         }
         dialog.setContentView(view);
@@ -202,12 +224,12 @@ public class StudentCourseDetails extends AppCompatActivity {
             public void onClick(View v) {
                 String sheetLink = tvSheetlink.getText().toString();
                 String id = GetSpreadsheetID(sheetLink);
-                if(id == null){
+                if (id == null) {
                     Toast.makeText(getApplicationContext(), "Invalid link", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                for(int i = 0; i < _dbCourse.size(); ++i){
-                    if(_dbCourse.get(i).Course.equals(courseCode)){
+                for (int i = 0; i < _dbCourse.size(); ++i) {
+                    if (_dbCourse.get(i).Course.equals(courseCode)) {
                         _dbCourse.get(i).Spreadsheetlink = sheetLink;
                         CurrentCourse = _dbCourse.get(i);
                         Paper.book().write("SCourses", _dbCourse);
@@ -228,11 +250,35 @@ public class StudentCourseDetails extends AppCompatActivity {
     }
 
     public boolean verify() {
-        if(TextUtils.isEmpty(trow.getText().toString())) {
+        if (TextUtils.isEmpty(trow.getText().toString())) {
             Toast.makeText(this, "Enter valid bench number", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(TextUtils.isEmpty(tcolumn.getText().toString())) {
+        if (TextUtils.isEmpty(tcolumn.getText().toString())) {
+            Toast.makeText(this, "Enter valid column number", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        String _row = trow.getText().toString();
+        String _col = tcolumn.getText().toString();
+        for (int i = 0; i < _row.length(); i++) {
+            if (!(_row.charAt(i) >= '0' && _row.charAt(i) <= '9')) {
+                Toast.makeText(this, "Enter valid bench number", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        for (int i = 0; i < _col.length(); i++) {
+            if (!(_col.charAt(i) >= '0' && _col.charAt(i) <= '9')) {
+                Toast.makeText(this, "Enter valid column number", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        int irow = Integer.parseInt(_row);
+        int icol = Integer.parseInt(_col);
+        if (irow > 20 || irow < 0) {
+            Toast.makeText(this, "Enter valid bench number", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (icol > 4 || icol < 0) {
             Toast.makeText(this, "Enter valid column number", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -255,7 +301,7 @@ public class StudentCourseDetails extends AppCompatActivity {
             chooseAccount();
         } else if (!isDeviceOnline()) {
             AlertDialogManager _dialog = new AlertDialogManager();
-            _dialog.showAlertDialog(this,"No Internet","To Create a Subject, Turn on Your Internet", false);
+            _dialog.showAlertDialog(this, "No Internet", "To Create a Subject, Turn on Your Internet", false);
             Log.d("Spread", "No network connection available.");
         } else {
             new StudentCourseDetails.MakeRequestTask(mCredential, "Googleapp", this).execute();
@@ -370,6 +416,7 @@ public class StudentCourseDetails extends AppCompatActivity {
         private double Percentage = 0;
         int status;
         private Exception mLastError = null;
+
         // The constructor
         MakeRequestTask(GoogleAccountCredential credential, String title, Context mcontext) {
             this.context = mcontext;
@@ -387,8 +434,7 @@ public class StudentCourseDetails extends AppCompatActivity {
             // function to create the spreadsheet
             try {
                 putDataFromApi();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 mLastError = e;
                 cancel(true);
                 e.printStackTrace();
@@ -397,41 +443,39 @@ public class StudentCourseDetails extends AppCompatActivity {
             return null;
         }
 
-        private String getColumn(int num){
+        private String getColumn(int num) {
             int mod = num % 26;
-            if(mod == 0){
+            if (mod == 0) {
                 mod = 27;
             }
             int start = (int) ceil(num / 27);
             String ret = "";
-            while (num>0) {
+            while (num > 0) {
                 // Find remainder
-                int rem = num%26;
+                int rem = num % 26;
                 // If remainder is 0, then a 'Z' must be there in output
-                if (rem==0){
-                    ret = ret+"Z";
-                    num = (num/26)-1;
-                }
-                else{
-                    char letter = (char)((rem-1) + 'A');
+                if (rem == 0) {
+                    ret = ret + "Z";
+                    num = (num / 26) - 1;
+                } else {
+                    char letter = (char) ((rem - 1) + 'A');
                     ret = ret + Character.toString(letter);
-                    num = num/26;
+                    num = num / 26;
                 }
             }
             return ret;
         }
 
         private void putDataFromApi() throws IOException {
-            String spreadsheetId=GetSpreadsheetID(CurrentCourse.Spreadsheetlink);
+            String spreadsheetId = GetSpreadsheetID(CurrentCourse.Spreadsheetlink);
 
             String range = "Sheet1";
             ValueRange result = mService.spreadsheets().values().get(spreadsheetId, range).execute();
 
             int numRows = result.getValues() != null ? result.getValues().size() : 0;
-            if(numRows == 0){
+            if (numRows == 0) {
                 status = 1;
-            }
-            else {
+            } else {
                 List<List<Object>> values = result.getValues();
                 ArrayList<ArrayList<String>> values2 = new ArrayList<>();
                 for (List<Object> row : values) {
@@ -446,27 +490,25 @@ public class StudentCourseDetails extends AppCompatActivity {
                 if (values.get(0).size() < 1) {
                     status = 1;
 
-                }
-                else {
+                } else {
                     for (int i = 0; i < values2.size(); ++i) {
                         if (values.get(i).get(0).equals(sessionManager.getKeyName().toUpperCase())) {
                             rollnumberRow = i;
                             break;
                         }
                     }
-                    if (rollnumberRow == -1){
+                    if (rollnumberRow == -1) {
                         status = 2;
-                    }
-                    else{
+                    } else {
                         status = 3;
                         double total = 0;
                         double attended = 0;
-                        for(int i = 1; i < values2.get(rollnumberRow).size(); ++i){
+                        for (int i = 1; i < values2.get(rollnumberRow).size(); ++i) {
                             total += 1;
-                            if(values2.get(rollnumberRow).get(i).equals("1"))
+                            if (values2.get(rollnumberRow).get(i).equals("1"))
                                 attended += 1;
                         }
-                        if(total > 0){
+                        if (total > 0) {
                             Percentage = attended / total * 100;
                         }
                         Log.d("sheets", String.format("%.2f", Percentage));
@@ -474,6 +516,7 @@ public class StudentCourseDetails extends AppCompatActivity {
                 }
             }
         }
+
         @Override
         protected void onPreExecute() {
             mProgress.show();
@@ -486,19 +529,19 @@ public class StudentCourseDetails extends AppCompatActivity {
             mProgress.hide();
 //            runOnUiThread(new Runnable(){
 //                public void run(){
-                    //show AlertDialog
-                    if(status==1){
-                        AlertDialogManager _dialog = new AlertDialogManager();
-                        _dialog.showAlertDialog(context,"Empty or Invalid sheet","Sheet is either empty or invalid", false);
-                    }
-                    if(status == 2){
-                        AlertDialogManager _dialog = new AlertDialogManager();
-                        _dialog.showAlertDialog(context,"Student not Found","Roll Number : " + sessionManager.getKeyName() + ", not found in google sheets", false);
-                    }
-                    if(status == 3) {
-                        AlertDialogManager _dialog = new AlertDialogManager();
-                        _dialog.showAlertDialog(context, "Percentage", "Attendance Percentage is : " + String.format("%.2f", Percentage), true);
-                    }
+            //show AlertDialog
+            if (status == 1) {
+                AlertDialogManager _dialog = new AlertDialogManager();
+                _dialog.showAlertDialog(context, "Empty or Invalid sheet", "Sheet is either empty or invalid", false);
+            }
+            if (status == 2) {
+                AlertDialogManager _dialog = new AlertDialogManager();
+                _dialog.showAlertDialog(context, "Student not Found", "Roll Number : " + sessionManager.getKeyName() + ", not found in google sheets", false);
+            }
+            if (status == 3) {
+                AlertDialogManager _dialog = new AlertDialogManager();
+                _dialog.showAlertDialog(context, "Percentage", "Attendance Percentage is : " + String.format("%.2f", Percentage), true);
+            }
 //                }
 //            });
         }
@@ -517,11 +560,11 @@ public class StudentCourseDetails extends AppCompatActivity {
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             StudentCourseDetails.REQUEST_AUTHORIZATION);
                 } else {
-                    Log.d("Spread","The following error occurred:\n"
+                    Log.d("Spread", "The following error occurred:\n"
                             + mLastError.getMessage());
                 }
             } else {
-                Log.d("Spread","Request cancelled.");
+                Log.d("Spread", "Request cancelled.");
             }
         }
     }

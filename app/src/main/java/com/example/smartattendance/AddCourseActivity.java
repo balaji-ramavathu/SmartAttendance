@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -55,7 +56,7 @@ import java.util.List;
 
 
 public class AddCourseActivity extends AppCompatActivity {
-    TextInputEditText etCourseCode, etCourseName;
+    TextInputEditText etCourseCode, etCourseName,etSuffix,etFrom,etTo;
     ImageButton addRoll;
     ListView lvRolls;
     ArrayList<RollNumber> rolls;
@@ -93,6 +94,9 @@ public class AddCourseActivity extends AppCompatActivity {
         cardView=findViewById(R.id.cvStudentDetails);
         etCourseCode = findViewById(R.id.etCourseCode);
         etCourseName = findViewById(R.id.etCourseName);
+        etSuffix = findViewById(R.id.etSuffix);
+        etFrom = findViewById(R.id.etRollFrom);
+        etTo = findViewById(R.id.etRollTo);
         sessionManager =new SessionManager(getApplicationContext());
         if(sessionManager.getProfession().equals("student")) {
             cardView.setVisibility(View.GONE);
@@ -103,8 +107,6 @@ public class AddCourseActivity extends AppCompatActivity {
             lvRolls = findViewById(R.id.lvRolls);
             rolls = new ArrayList<>();
             //first empty item
-            RollNumber rollNumber = new RollNumber();
-            rolls.add(rollNumber);
 
 
             arrayAdapter = new AddRollsArrayAdapter(this, R.layout.add_rolls_item, rolls);
@@ -142,12 +144,27 @@ public class AddCourseActivity extends AppCompatActivity {
 
 
     public void onClickBtnAddRoll(View view) {
-        RollNumber rollNumber = new RollNumber();
-        rolls.add(rollNumber);
-        arrayAdapter.notifyDataSetChanged();
-        Utils.hideKeyboard(this);
 
+        if(Utils.isBlank(etSuffix.getText().toString())
+                ||Utils.isBlank(etFrom.getText().toString())
+                || Utils.isBlank(etTo.getText().toString())) {
+            Toast.makeText(this,"Fill all the fields before adding!",(Toast.LENGTH_LONG)).show();
+
+        } else {
+            RollNumber rollNumber = new RollNumber();
+            rollNumber.setSuffix(etSuffix.getText().toString());
+            rollNumber.setFrom(Integer.valueOf(etFrom.getText().toString()));
+            rollNumber.setTo(Integer.valueOf(etTo.getText().toString()));
+            rolls.add(rollNumber);
+            arrayAdapter.notifyDataSetChanged();
+            etSuffix.setText("");
+            etFrom.setText("");
+            etTo.setText("");
+            etSuffix.requestFocus();
+
+        }
     }
+
     String makeValidroll(int num){
         String _num = Integer.toString(num);
         if(_num.length() == 1){
@@ -176,35 +193,28 @@ public class AddCourseActivity extends AppCompatActivity {
                 String _courseName = etCourseName.getText().toString().toUpperCase();
                 //thisCourse.setCourseName(etCourseName.getText().toString().toUpperCase());
                 int count = lvRolls.getChildCount();
-                int notNullChildrenCount = count;
-                Log.d("Roll", Integer.toString(count));
-                ArrayList<String> Suffix = new ArrayList<String>();
-                ArrayList<Integer> From = new ArrayList<Integer>();
-                ArrayList<Integer> To = new ArrayList<Integer>();
-                for (int i = 0; i < count; i++) {
-                    v = lvRolls.getChildAt(i);
-                    etSuffix = v.findViewById(R.id.etSuffix);
-                    etFrom = v.findViewById(R.id.etRollFrom);
-                    etTo = v.findViewById(R.id.etRollTo);
-                    String suffix = etSuffix.getText().toString().toUpperCase();
-                    String from = etFrom.getText().toString();
-                    String to = etTo.getText().toString();
-                    if (!(Utils.isBlank(suffix)||Utils.isBlank(from) || Utils.isBlank(to))) {
-                        Suffix.add(suffix);
-                        From.add(Integer.parseInt(from));
-                        To.add(Integer.parseInt(to));
-                        RollNumber rollNumber = new RollNumber(suffix,Integer.parseInt(from),Integer.parseInt(to));
-                        Log.d("roll",suffix+from+to);
-                        // rolls.add(rollNumber);
-                    } else {
-                        notNullChildrenCount--;
-                    }
+                if(count==0) {
+                    Toast.makeText(this, "Add Students details!", Toast.LENGTH_LONG).show();
+                    return;
                 }
+                //int notNullChildrenCount = count;
+                Log.d("Roll", Integer.toString(count));
+                ArrayList<String> suffixList = new ArrayList<String>();
+                ArrayList<Integer> fromList = new ArrayList<Integer>();
+                ArrayList<Integer> toList = new ArrayList<Integer>();
+                ArrayList<RollNumber> rollNumbersLimits =arrayAdapter.getRolls();
+
+                for(int i=0;i<rollNumbersLimits.size();i++) {
+                    suffixList.add(rollNumbersLimits.get(i).getSuffix());
+                    fromList.add(rollNumbersLimits.get(i).getFrom());
+                    toList.add(rollNumbersLimits.get(i).getTo());
+                }
+
                 ArrayList<dbRollnumber> _dbRollnumber= new ArrayList<dbRollnumber>();
-                for (int i = 0; i < Suffix.size(); i++) {
-                    for (int j = From.get(i); j <= To.get(i); j++) {
-                        _dbRollnumber.add(new dbRollnumber(Suffix.get(i).toUpperCase() + makeValidroll(j), 0));
-                        _rollnumbers.add(Suffix.get(i).toUpperCase() + makeValidroll(j));
+                for (int i = 0; i < suffixList.size(); i++) {
+                    for (int j = fromList.get(i); j <= toList.get(i); j++) {
+                        _dbRollnumber.add(new dbRollnumber(suffixList.get(i).toUpperCase() + makeValidroll(j), 0));
+                        _rollnumbers.add(suffixList.get(i).toUpperCase() + makeValidroll(j));
                     }
                 }
                 Collections.sort(_rollnumbers);

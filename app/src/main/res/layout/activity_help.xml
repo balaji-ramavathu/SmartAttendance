@@ -14,7 +14,7 @@
         android:background="@color/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:titleTextColor="@color/white"
-        app:theme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:theme="@style/ToolbarTheme"/>
 
     <ExpandableListView
         android:layout_width="match_parent"

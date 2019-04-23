@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Smart Attendance</string>
     <string name="message">Smart attendance message</string>
+    <string name="help_title">About</string>
 
     <string-array name="help_headings">
         <item>How the system works</item>
@@ -13,8 +14,7 @@
     <string-array name="help_infos">
 
         <!--how this actually works info-->
-        <item>
-            \n1. Both Teacher and Student adds the teaching or enrolled courses.
+        <item>1. Both Teacher and Students add the teaching or enrolled courses.
             \n2. Teacher will announce the Attendance mode to the students (WiFi or Bluetooth).
             \n3. Students will select the mode, enter the row, column of their seated bench.
             \n4. Teacher will get the attendance list either through Bluetooth or WiFi, which can be uploaded to Google Sheets by the teacher.
@@ -24,10 +24,13 @@
 
         <!--adding courses info-->
         <item>1. Add Courses one at a time by tapping Plus button in the dashboard.
-        \n2. Enter the details of the course and the range of enrolled students of the course.
+            \n\nFor Students:
+            \n 2. Just add the course details and tap the tick button.
+            \n\nFor Teacher:
+        \n 2. Enter the details of the course and the range of enrolled students of the course.
         \n3. Tap the tick button and select your Google Sheets account to store the Attendance sheet.
         \n4. Wait for the sheet to upload and that\'s it! You can see all the added courses in your dashboard.
-        \n5. This step requires internet connection.
+        \n5. Internet connection is required.
         </item>
 
         <!--taking attendance info:-->
@@ -42,8 +45,7 @@
         </item>
 
         <!--marking attendance info-->
-        <item>
-            \n1. Select the Course and Attendance mode.
+        <item>1. Select the Course and Attendance mode.
             \n2. Enter the row and column of the Bench.
             \n3. If the attendance mode is WiFi, you need to turn on the Hotspot manually.
             \n4. Hotspot name will be generated and will be copied directly to the clipboard once you tap on \'Mark Attendance\'.
