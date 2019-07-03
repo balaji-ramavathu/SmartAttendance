@@ -113,6 +113,8 @@ public class StudentDashboardAdapter extends RecyclerView.Adapter<StudentDashboa
         courseList.add(mRecentlyDeletedItemPosition,mRecentlyDeletedItem);
         notifyItemInserted(mRecentlyDeletedItemPosition);
         Paper.book().write("SCourses",courseList);
+        notifyDataSetChanged();
+
     }
 
 

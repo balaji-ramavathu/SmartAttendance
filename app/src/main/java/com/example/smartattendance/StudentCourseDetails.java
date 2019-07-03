@@ -251,35 +251,24 @@ public class StudentCourseDetails extends AppCompatActivity {
 
     public boolean verify() {
         if (TextUtils.isEmpty(trow.getText().toString())) {
-            Toast.makeText(this, "Enter valid bench number", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter Row number", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (TextUtils.isEmpty(tcolumn.getText().toString())) {
-            Toast.makeText(this, "Enter valid column number", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter Column number", Toast.LENGTH_SHORT).show();
             return false;
         }
         String _row = trow.getText().toString();
         String _col = tcolumn.getText().toString();
-        for (int i = 0; i < _row.length(); i++) {
-            if (!(_row.charAt(i) >= '0' && _row.charAt(i) <= '9')) {
-                Toast.makeText(this, "Enter valid bench number", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }
-        for (int i = 0; i < _col.length(); i++) {
-            if (!(_col.charAt(i) >= '0' && _col.charAt(i) <= '9')) {
-                Toast.makeText(this, "Enter valid column number", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }
+
         int irow = Integer.parseInt(_row);
         int icol = Integer.parseInt(_col);
         if (irow > 20 || irow < 0) {
-            Toast.makeText(this, "Enter valid bench number", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Row number cannot be more than 20", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (icol > 4 || icol < 0) {
-            Toast.makeText(this, "Enter valid column number", Toast.LENGTH_SHORT).show();
+        if (icol > 20 || icol < 0) {
+            Toast.makeText(this, "Column number cannot be more than 20", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

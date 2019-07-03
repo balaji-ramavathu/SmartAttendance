@@ -121,6 +121,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         courseList.add(mRecentlyDeletedItemPosition,mRecentlyDeletedItem);
         notifyItemInserted(mRecentlyDeletedItemPosition);
         Paper.book().write("Courses",courseList);
+        notifyDataSetChanged();
     }
 
 
