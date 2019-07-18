@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.smartattendance">
+    package="com.iiita.smartattendance">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -14,41 +14,41 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
-        android:name=".SmartAttendanceApplication"
+        android:name="com.iiita.smartattendance.SmartAttendanceApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher_app"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher_app"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HelpActivity"
+        <activity android:name="com.iiita.smartattendance.HelpActivity"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".StudentCourseDetails"
+        <activity android:name="com.iiita.smartattendance.StudentCourseDetails"
             android:screenOrientation="portrait"/>
-        <activity android:name=".StudentDashboardActivity"
+        <activity android:name="com.iiita.smartattendance.StudentDashboardActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".VirtualMap"
+        <activity android:name="com.iiita.smartattendance.VirtualMap"
             android:screenOrientation="portrait"/>
-        <activity android:name=".AddCourseActivity"
+        <activity android:name="com.iiita.smartattendance.AddCourseActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".CourseDetails"
+        <activity android:name="com.iiita.smartattendance.CourseDetails"
             android:screenOrientation="portrait"/>
-        <activity android:name=".WifiHelper"
+        <activity android:name="com.iiita.smartattendance.WifiHelper"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".TeacherDashboardActivity"
+            android:name="com.iiita.smartattendance.TeacherDashboardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
-        <activity android:name=".StudentLoginActivity"
+        <activity android:name="com.iiita.smartattendance.StudentLoginActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".TeacherLoginActivity"
+        <activity android:name="com.iiita.smartattendance.TeacherLoginActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".Wifi_fun"
+        <activity android:name="com.iiita.smartattendance.Wifi_fun"
             android:screenOrientation="portrait"/>
-        <activity android:name=".Bluetooth_fun"
+        <activity android:name="com.iiita.smartattendance.Bluetooth_fun"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
+        <activity android:name="com.iiita.smartattendance.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
